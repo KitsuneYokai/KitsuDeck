@@ -3,5 +3,6 @@
 
 void errorSD();
 void errorSettings();
+void errorWiFi();
 
 #endif

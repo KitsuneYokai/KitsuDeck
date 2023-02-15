@@ -4,4 +4,6 @@
 
 String getNetworks();
 String testWifiConnection(String ssid, String password);
+bool connectToWifi(String ssid, String password);
+bool disconnectFromWifi();
 #endif

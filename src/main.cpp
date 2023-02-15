@@ -9,6 +9,7 @@
 #include "ui/ui.h"
 #include "utils/Screen.h"
 #include "utils/WebServer.h"
+#include "utils/wifiUtils.h"
 #include "utils/settings.h"
 #include "utils/ScreenMessages.h"
 
@@ -39,9 +40,25 @@ void initializeLVGL(void *parameter)
     // create settings file
     createSettings();
   }
-
+  // set the brightness of the display to the value in the settings file
   ledcWrite(0, getSettings("brightness").toInt());
 
+  // initialize WiFi
+  // check if the settings file has a ssid and password
+  String ssid = getSettings("wifi_ssid");
+  String password = getSettings("wifi_password");
+
+  if (ssid != "" || password != "")
+  {
+    bool wifiCheck = connectToWifi(ssid.c_str(), password.c_str());
+    gfx->setCursor(0, 0);
+    gfx->setTextSize(2);
+    gfx->println("Connecting to WiFi...");
+    if (!wifiCheck)
+    {
+      errorWiFi();
+    }
+  }
   // Init LVGL
   lv_init();
 
@@ -81,7 +98,7 @@ void setup()
   // Start the task that initializes LVGL
   xTaskCreatePinnedToCore(initializeLVGL, "lvgl_task", 8192, NULL, 1, NULL, 1);
   // Start the web server in a new task
-  xTaskCreatePinnedToCore(startWebServer, "web_server", 8192, NULL, 1, NULL, 1);
+  // xTaskCreatePinnedToCore(startWebServer, "web_server", 8192, NULL, 1, NULL, 1);
 }
 
 void loop()

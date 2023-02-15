@@ -48,6 +48,7 @@ void SaveWifiSettings(lv_event_t *e)
 	// get values from ui_WifiPasswordTextInput and ui_WifiSsidRoller
 	String password = lv_textarea_get_text(ui_WifiPasswordTextInput);
 	// get the ssid form the roller
+	// TODO: make a check if the wifi connection is successful
 	char ssid[100];
 	lv_roller_get_selected_str(ui_WifiSsidRoller, ssid, 100);
 	String finalSsid = String(ssid);

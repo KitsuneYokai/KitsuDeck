@@ -1,12 +1,12 @@
-#include "WebServer.h"
-#include <Arduino.h>
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
 
+#include "WebServer.h"
+#include "Settings.h"
+
+AsyncWebServer server(80);
 void startWebServer(void *parameter)
 {
-    Serial.println("WebServer started");
-    // TODO: start server & check for network connection
-    while (true)
-    {
-        delay(1000);
-    }
 }
