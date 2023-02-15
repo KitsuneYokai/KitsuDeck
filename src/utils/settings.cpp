@@ -24,7 +24,6 @@ void createSettings()
         doc["brightness"] = 100;
         doc["wifi_ssid"] = "";
         doc["wifi_password"] = "";
-        doc["computer_ip"] = "";
         doc["computer_user"] = "";
         doc["computer_password"] = "";
         serializeJson(doc, file);
@@ -35,15 +34,15 @@ void createSettings()
 /* Settings Functions */
 // settings file variable
 
-String checkSettingsBool()
+bool checkSettingsBool()
 {
     if (SD.exists(settingsFile))
     {
-        return "true";
+        return true;
     }
     else
     {
-        return "false";
+        return false;
     }
 }
 

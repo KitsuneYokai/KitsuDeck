@@ -6,7 +6,7 @@
 #include "ui.h"
 #include "../utils/wifiUtils.h"
 #include "../utils/settings.h"
-#include "../main.h"
+#include "../utils/Screen.h"
 #include "WiFi.h"
 
 void initHome(lv_event_t *e)
@@ -23,10 +23,8 @@ void initSettings(lv_event_t *e)
 	lv_textarea_set_text(ui_WifiPasswordTextInput, wifiPassword.c_str());
 
 	// set the values of the computer settings
-	String computerIp = getSettings("computer_ip");
 	String computerUser = getSettings("computer_user");
 	String computerPassword = getSettings("computer_password");
-	lv_textarea_set_text(ui_ComputerIpInput, computerIp.c_str());
 	lv_textarea_set_text(ui_ComputerAuthUsername, computerUser.c_str());
 	lv_textarea_set_text(ui_ComputerAuthPassword, computerPassword.c_str());
 
@@ -62,10 +60,14 @@ void TestWifiSettings(lv_event_t *e)
 	// get values ssid and password from settings
 	String password = getSettings("wifi_password");
 	String ssid = getSettings("wifi_ssid");
+	String testResult = testWifiConnection(ssid, password);
 
-	if (testWifiConnection(ssid, password))
+	char testResultChar[testResult.length() + 1];
+	testResult.toCharArray(testResultChar, testResult.length() + 1);
+	// set the test result to the ui_WifiTestResultLabel
+	if (testResult != "error")
 	{
-		lv_label_set_text(ui_WifiTestResultLabel, "Connected");
+		lv_label_set_text(ui_WifiTestResultLabel, testResultChar);
 	}
 	else
 	{
@@ -75,13 +77,22 @@ void TestWifiSettings(lv_event_t *e)
 
 void SaveComputerSettings(lv_event_t *e)
 {
-	String ip = lv_textarea_get_text(ui_ComputerIpInput);
 	String username = lv_textarea_get_text(ui_ComputerAuthUsername);
 	String password = lv_textarea_get_text(ui_ComputerAuthPassword);
 
-	setSettings("computer_ip", ip);
 	setSettings("computer_user", username);
 	setSettings("computer_password", password);
+}
+
+void setSettingsBrightnessArkValue(lv_event_t *e)
+{
+
+	String value = String(lv_arc_get_value(ui_ScreenBrightnessArk));
+	// convert the value to be maximum 255 and minimum 10
+	value = String((value.toInt() * 255) / 100);
+	if (value.toInt() < 10)
+		value = "10";
+	setLCDBrightness(value.toInt());
 }
 
 void saveSettingsBrightnessArkValue(lv_event_t *e)
@@ -91,7 +102,5 @@ void saveSettingsBrightnessArkValue(lv_event_t *e)
 	value = String((value.toInt() * 255) / 100);
 	if (value.toInt() < 10)
 		value = "10";
-
 	setSettings("brightness", value);
-	setLCDBrightness(value.toInt());
 }

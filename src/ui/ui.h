@@ -50,8 +50,6 @@ extern lv_obj_t *ui_TestWifiSettingsButton;
 extern lv_obj_t *ui_TestWifiSettingsText;
 extern lv_obj_t *ui_ComputerSettings;
 extern lv_obj_t *ui_ComputerSettingsHeader;
-void ui_event_ComputerIpInput( lv_event_t * e);
-extern lv_obj_t *ui_ComputerIpInput;
 extern lv_obj_t *ui_AuthHeading;
 void ui_event_ComputerAuthUsername( lv_event_t * e);
 extern lv_obj_t *ui_ComputerAuthUsername;
@@ -73,6 +71,7 @@ void ScanWifiSsid(lv_event_t * e);
 void SaveWifiSettings(lv_event_t * e);
 void TestWifiSettings(lv_event_t * e);
 void SaveComputerSettings(lv_event_t * e);
+void setSettingsBrightnessArkValue(lv_event_t * e);
 void saveSettingsBrightnessArkValue(lv_event_t * e);
 
 LV_IMG_DECLARE( ui_img_deckimg_png);   // assets/deckImg.png

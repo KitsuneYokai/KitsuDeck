@@ -15,7 +15,7 @@
 // #define TOUCH_MAP_X2 0
 // #define TOUCH_MAP_Y1 0
 // #define TOUCH_MAP_Y2 320
-
+#include "Screen.h"
 /* uncomment for GT911 */
 #define TOUCH_GT911
 #define TOUCH_GT911_SCL 20

@@ -3,5 +3,5 @@
 #include <Arduino.h>
 
 String getNetworks();
-bool testWifiConnection(String ssid, String password);
+String testWifiConnection(String ssid, String password);
 #endif

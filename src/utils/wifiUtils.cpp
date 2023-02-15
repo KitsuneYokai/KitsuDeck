@@ -27,10 +27,16 @@ String getNetworks()
     return networks;
 }
 
-bool testWifiConnection(String ssid, String password)
+String testWifiConnection(String ssid, String password)
 {
-    WiFi.begin(ssid.c_str(), password.c_str());
     int i = 0;
+    uint64_t chipid = ESP.getEfuseMac();
+    char hostname[64] = "KitsuDeck-";
+    sprintf(hostname + 10, "%04X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
+
+    WiFi.setHostname(hostname);
+    WiFi.begin(ssid.c_str(), password.c_str());
+
     while (WiFi.status() != WL_CONNECTED && i < 10)
     {
         delay(500);
@@ -39,10 +45,11 @@ bool testWifiConnection(String ssid, String password)
     if (WiFi.status() == WL_CONNECTED)
     {
         WiFi.disconnect();
-        return true;
+        // return the IP address of the ESP32
+        return WiFi.localIP().toString();
     }
     else
     {
-        return false;
+        return "error";
     }
 }

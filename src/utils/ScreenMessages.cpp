@@ -1,5 +1,5 @@
 #include "ScreenMessages.h"
-#include "main.h"
+#include "utils/Screen.h"
 
 // error message for when the SD Card is not found
 void errorSD()

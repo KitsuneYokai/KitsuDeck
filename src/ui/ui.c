@@ -45,8 +45,6 @@ lv_obj_t *ui_TestWifiSettingsButton;
 lv_obj_t *ui_TestWifiSettingsText;
 lv_obj_t *ui_ComputerSettings;
 lv_obj_t *ui_ComputerSettingsHeader;
-void ui_event_ComputerIpInput( lv_event_t * e);
-lv_obj_t *ui_ComputerIpInput;
 lv_obj_t *ui_AuthHeading;
 void ui_event_ComputerAuthUsername( lv_event_t * e);
 lv_obj_t *ui_ComputerAuthUsername;
@@ -142,15 +140,6 @@ if ( event_code == LV_EVENT_RELEASED) {
       TestWifiSettings( e );
 }
 }
-void ui_event_ComputerIpInput( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      _ui_flag_modify( ui_SettingsKeyboardText, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-}
-if ( event_code == LV_EVENT_PRESSED) {
-      _ui_keyboard_set_target(ui_SettingsKeyboardText,  ui_ComputerIpInput);
-}
-}
 void ui_event_ComputerAuthUsername( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
@@ -179,6 +168,9 @@ if ( event_code == LV_EVENT_RELEASED) {
 void ui_event_ScreenBrightnessArk( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_VALUE_CHANGED) {
+      setSettingsBrightnessArkValue( e );
+}
+if ( event_code == LV_EVENT_RELEASED) {
       saveSettingsBrightnessArkValue( e );
 }
 }
@@ -432,15 +424,6 @@ lv_obj_set_align( ui_ComputerSettingsHeader, LV_ALIGN_CENTER );
 lv_label_set_text(ui_ComputerSettingsHeader,"Computer settings:");
 lv_obj_set_style_text_font(ui_ComputerSettingsHeader, &lv_font_montserrat_16, LV_PART_MAIN| LV_STATE_DEFAULT);
 
-ui_ComputerIpInput = lv_textarea_create(ui_ComputerSettings);
-lv_obj_set_width( ui_ComputerIpInput, 200);
-lv_obj_set_height( ui_ComputerIpInput, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_ComputerIpInput, -45 );
-lv_obj_set_y( ui_ComputerIpInput, 33 );
-lv_obj_set_align( ui_ComputerIpInput, LV_ALIGN_CENTER );
-lv_textarea_set_placeholder_text(ui_ComputerIpInput,"192.168.178.65");
-lv_textarea_set_one_line(ui_ComputerIpInput,true);
-
 ui_AuthHeading = lv_label_create(ui_ComputerSettings);
 lv_obj_set_width( ui_AuthHeading, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_AuthHeading, LV_SIZE_CONTENT);   /// 1
@@ -479,7 +462,7 @@ ui_ComputerSaveText = lv_label_create(ui_ComputerSaveButton);
 lv_obj_set_width( ui_ComputerSaveText, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_ComputerSaveText, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_ComputerSaveText, LV_ALIGN_CENTER );
-lv_label_set_text(ui_ComputerSaveText,"Lets Dance");
+lv_label_set_text(ui_ComputerSaveText,"Save");
 
 ui_DeviceSettings = lv_obj_create(ui_SettingsPanel);
 lv_obj_set_height( ui_DeviceSettings, lv_pct(100));
@@ -523,7 +506,6 @@ lv_obj_add_event_cb(ui_WifiPasswordTextInput, ui_event_WifiPasswordTextInput, LV
 lv_obj_add_event_cb(ui_WifiScanButton, ui_event_WifiScanButton, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_WifiSaveButton, ui_event_WifiSaveButton, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_TestWifiSettingsButton, ui_event_TestWifiSettingsButton, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ComputerIpInput, ui_event_ComputerIpInput, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ComputerAuthUsername, ui_event_ComputerAuthUsername, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ComputerAuthPassword, ui_event_ComputerAuthPassword, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ComputerSaveButton, ui_event_ComputerSaveButton, LV_EVENT_ALL, NULL);

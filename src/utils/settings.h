@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 void createSettings();
-String checkSettingsBool();
+bool checkSettingsBool();
 String validateSettingsJson();
 String getSettings(String key);
 String setSettings(String key, String value);
