@@ -1,7 +1,9 @@
-#include "Arduino.h"
+#include <Arduino.h>
 // #include "wifiUtils.h"
 #include "WiFi.h"
 #include "../ui/ui.h"
+
+#include "WebServer.h"
 
 String getKitsuDeckHostname()
 {
@@ -47,9 +49,20 @@ String testWifiConnection(String ssid, String password)
         delay(500);
         i++;
     }
+
     if (WiFi.status() == WL_CONNECTED)
     {
-        WiFi.disconnect();
+        // check if web_server task is running
+        TaskHandle_t task_handle = xTaskGetHandle("web_server");
+        if (task_handle != NULL)
+        {
+            // web_server task is running, terminate it
+            vTaskDelete(task_handle);
+        }
+
+        // start web_server task again
+        xTaskCreatePinnedToCore(startWebServer, "web_server", 10000, NULL, 1, &task_handle, 0);
+
         // return the IP address of the ESP32
         return WiFi.localIP().toString();
     }
