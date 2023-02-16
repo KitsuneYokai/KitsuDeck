@@ -48,6 +48,7 @@ void initializeLVGL(void *parameter)
   String ssid = getSettings("wifi_ssid");
   String password = getSettings("wifi_password");
 
+  // TODO: make better :P
   if (ssid != "" || password != "")
   {
     bool wifiCheck = connectToWifi(ssid.c_str(), password.c_str());
