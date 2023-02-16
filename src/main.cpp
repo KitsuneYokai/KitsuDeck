@@ -80,8 +80,8 @@ void setup()
 {
   // Start the task that initializes LVGL
   xTaskCreatePinnedToCore(initializeLVGL, "lvgl_task", 8192, NULL, 1, NULL, 1);
-  // wait for the task to finish 7 seks
-  vTaskDelay(pdMS_TO_TICKS(7000));
+  // wait for the task to finish 1 seks
+  vTaskDelay(pdMS_TO_TICKS(1000));
   // Start the web server in a new task
   xTaskCreatePinnedToCore(startWebServer, "web_server", 8192, NULL, 1, NULL, 1);
 }
