@@ -73,8 +73,4 @@ void errorWiFi()
     gfx->println("    and that you have the correct password.\n");
     gfx->println("    If you still can't get it to work,");
     gfx->println("    please contact me on Discord!             - KitsuneYokai#7746\n\n\n\n");
-    gfx->setCursor(0, gfx->height() - 20);
-    gfx->println("You have 60 seconds until I contact Skynet to destroy the world!");
-    delay(60000);
-    ESP.restart();
 }
