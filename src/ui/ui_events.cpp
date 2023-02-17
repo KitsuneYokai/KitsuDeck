@@ -37,10 +37,12 @@ void initSettings(lv_event_t *e)
 
 void ScanWifiSsid(lv_event_t *e)
 {
-	// TODO: replace by non blocking code that updates the ui_WifiSsidRoller
 	String WifiNetworks = getNetworks();
-	// split the WifiNetworks string by comma and add them to the ui_WifiSsidRoller as options
 	lv_roller_set_options(ui_WifiSsidRoller, WifiNetworks.c_str(), LV_ANIM_ON);
+	if (checkSettingsWifiBool())
+	{
+		testWifiConnection(getSettings("wifi_ssid"), getSettings("wifi_password"));
+	}
 }
 
 void SaveWifiSettings(lv_event_t *e)
@@ -48,12 +50,16 @@ void SaveWifiSettings(lv_event_t *e)
 	// get values from ui_WifiPasswordTextInput and ui_WifiSsidRoller
 	String password = lv_textarea_get_text(ui_WifiPasswordTextInput);
 	// get the ssid form the roller
-	// TODO: make a check if the wifi connection is successful
 	char ssid[100];
 	lv_roller_get_selected_str(ui_WifiSsidRoller, ssid, 100);
 	String finalSsid = String(ssid);
-	setSettings("wifi_ssid", finalSsid);
-	setSettings("wifi_password", password);
+	String wifiTest = testWifiConnection(finalSsid, password);
+	if (wifiTest != "error")
+	{
+		lv_label_set_text(ui_WifiTestResultLabel, wifiTest.c_str());
+		setSettings("wifi_ssid", finalSsid);
+		setSettings("wifi_password", password);
+	}
 }
 
 void TestWifiSettings(lv_event_t *e)
