@@ -22,5 +22,7 @@ I have some ideas for the future, but I will see how far I get with this project
 - [Visual Studio Code](https://code.visualstudio.com/) (for the IDE)
 - [SquarelineStudio](https://squareline.io/) (for the GUI design)(source will be uploaded later, when it is finished)
 
+- [KitsuDeckDash](https://github.com/KitsuneYokai/KitsuDeckDash) (This is/will be the desktop application for the KitsuDeck to create new makros. It will also server as a "bridge" between the ESP32 and the PC, so the ESP32 can control the PC.")
+
 ## How to use
 more info will be added later on since the project is still in development and there might be some changes 
