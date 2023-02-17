@@ -2,7 +2,8 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
-
+#include <AsyncTCP.h>
+#include "SD.h"
 #include "WebServer.h"
 #include "Settings.h"
 #include "utils/wifiUtils.h"
@@ -10,31 +11,49 @@
 #include "utils/ScreenMessages.h"
 
 AsyncWebServer server(80);
+AsyncWebSocket webSocket("/ws");
+
+void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+{
+    // Handle WebSocket message here
+    if (type == WS_EVT_CONNECT)
+    {
+        // if client connects to the websocket send hello message as a test
+        client->text("Hello Client " + String(client->id()));
+    }
+}
+
 void startWebServer(void *parameter)
 {
-    // initialize WiFi
-    // check if the settings file has a ssid and password
-    String ssid = getSettings("wifi_ssid");
-    String password = getSettings("wifi_password");
-
-    // TODO: make better :P
-    if (ssid != "" || password != "")
+    vTaskDelay(500);
+    if (checkSettingsWifiBool())
     {
-        bool wifiCheck = connectToWifi(ssid.c_str(), password.c_str());
-        if (!wifiCheck)
+        Serial.println("Starting Web/WebSocket server");
+        // connect to wifi
+        WiFi.begin(getSettings("wifi_ssid").c_str(), getSettings("wifi_password").c_str());
+        while (WiFi.status() != WL_CONNECTED)
         {
-            errorWiFi();
+            delay(500);
+            Serial.print(".");
+        }
+        server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request)
+                  { request->send(200, "text/plain", "Hello World"); });
+
+        // Setup WebSocket server
+        webSocket.onEvent(handleWebSocketMessage);
+        server.addHandler(&webSocket);
+
+        server.begin();
+
+        while (true)
+        {
+            // Wait for incoming client requests and WebSocket messages
+            vTaskDelay(500);
+            webSocket.cleanupClients(); // Cleanup disconnected clients
         }
     }
-
-    server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(200, "text/plain", "Hello World"); });
-
-    server.begin();
-
-    while (1)
+    else
     {
-        // Wait for incoming client requests
-        delay(1000);
+        vTaskDelete(NULL);
     }
 }

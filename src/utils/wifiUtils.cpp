@@ -18,7 +18,7 @@ String getNetworks()
 {
     String networks = "";
     int n = WiFi.scanNetworks();
-    delay(6000);
+    vTaskDelay(1000);
     if (n == 0)
     {
         networks = "No networks found";

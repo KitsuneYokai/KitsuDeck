@@ -15,7 +15,7 @@
 
 #define TFT_BL 2
 
-void initializeLVGL(void *parameter)
+void initializeLVGL()
 {
   Serial.begin(115200);
   Serial.println("KitsuDeck v0.1 - ESP32 Lets Go!");
@@ -47,11 +47,9 @@ void initializeLVGL(void *parameter)
 
   /*Initialize the Touch */
   initSetupTouch();
-
   screenWidth = gfx->width();
   screenHeight = gfx->height();
   disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * screenHeight / 4, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-
   lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * screenHeight / 4);
 
   /* Initialize the display */
@@ -71,19 +69,21 @@ void initializeLVGL(void *parameter)
   ui_init();
 
   Serial.println("Setup done");
-
-  // End of the task, delete itself
-  vTaskDelete(NULL);
 }
 
 void setup()
 {
-  // Start the task that initializes LVGL
-  xTaskCreatePinnedToCore(initializeLVGL, "lvgl_task", 8192, NULL, 1, NULL, 1);
-  // wait for the task to finish 1 seks
-  vTaskDelay(pdMS_TO_TICKS(1000));
+  // Initialize LVGL
+  initializeLVGL();
   // Start the web server in a new task
-  xTaskCreatePinnedToCore(startWebServer, "web_server", 8192, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(
+      startWebServer, /* Task function. */
+      "web_server",   /* name of task. */
+      10000,          /* Stack size of task */
+      NULL,           /* parameter of the task */
+      1,              /* priority of the task */
+      NULL,           /* Task handle to keep track of created task */
+      0);             /* pin task to core 0 */
 }
 
 void loop()

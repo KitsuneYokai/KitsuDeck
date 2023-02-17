@@ -30,7 +30,25 @@ void createSettings()
         file.close();
     }
 }
-
+bool checkSettingsWifiBool()
+{
+    if (SD.exists(settingsFile))
+    {
+        // check if the wifi_ssid and wifi_password are set
+        if (getSettings("wifi_ssid") != "" && getSettings("wifi_password") != "")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
 /* Settings Functions */
 // settings file variable
 
