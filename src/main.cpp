@@ -1,3 +1,4 @@
+#include <WiFi.h>
 #include <lvgl.h>
 #include <SD.h>
 #include <ArduinoJson.h>
@@ -14,11 +15,13 @@
 #include "utils/ScreenMessages.h"
 
 #define TFT_BL 2
+const int TASK_STACK_SIZE = 8192;
 
 void initializeLVGL()
 {
   Serial.begin(115200);
   Serial.println("KitsuDeck v0.1 - ESP32 Lets Go!");
+
   // Init Display
   gfx->begin();
   pinMode(TFT_BL, OUTPUT);
@@ -30,29 +33,29 @@ void initializeLVGL()
   // Init SD Card
   if (!SD.begin())
   {
-    // if the SD card is not found/initialize error, show error message on the screen
     errorSD();
   }
-  // check if the settings file exists/valid
-  bool settingsCheck = checkSettingsBool();
-  if (!settingsCheck)
+
+  // Check if the settings file exists/valid
+  if (!checkSettingsBool())
   {
-    // create settings file
     createSettings();
   }
-  // set the brightness of the display to the value in the settings file
+
+  // Set the brightness of the display to the value in the settings file
   ledcWrite(0, getSettings("brightness").toInt());
+
   // Init LVGL
   lv_init();
 
-  /*Initialize the Touch */
+  // Initialize the Touch
   initSetupTouch();
   screenWidth = gfx->width();
   screenHeight = gfx->height();
   disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * screenHeight / 4, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-  lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * screenHeight / 4);
+  lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, nullptr, screenWidth * screenHeight / 4);
 
-  /* Initialize the display */
+  // Initialize the display
   lv_disp_drv_init(&disp_drv);
   disp_drv.hor_res = screenWidth;
   disp_drv.ver_res = screenHeight;
@@ -60,7 +63,7 @@ void initializeLVGL()
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
-  /* Initialize touch driver */
+  // Initialize touch driver
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -75,15 +78,16 @@ void setup()
 {
   // Initialize LVGL
   initializeLVGL();
+
   // Start the web server in a new task
   xTaskCreatePinnedToCore(
-      startWebServer, /* Task function. */
-      "web_server",   /* name of task. */
-      10000,          /* Stack size of task */
-      NULL,           /* parameter of the task */
-      1,              /* priority of the task */
-      NULL,           /* Task handle to keep track of created task */
-      0);             /* pin task to core 0 */
+      startWebServer,
+      "web_server",
+      TASK_STACK_SIZE,
+      nullptr,
+      1,
+      nullptr,
+      0);
 }
 
 void loop()
