@@ -116,7 +116,7 @@ void startWebServer(void *parameter)
             NULL, handleKitsuDeckAuthRequest);
         // 404
         server.onNotFound([](AsyncWebServerRequest *request)
-                          { request->send(404, "text/plain", "What yre you looking for ?.?,\n anyways ... i couldnt find what you are looking for"); });
+                          { request->send(404, "text/plain", "What yre you looking for ?.?,\nAnyways ... i couldn't find what you are looking for, 404"); });
         // Setup WebSocket server
         webSocket.onEvent(handleWebSocketMessage);
         server.addHandler(&webSocket);
