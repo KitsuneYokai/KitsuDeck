@@ -23,10 +23,19 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
 {
     if (type == WS_EVT_CONNECT)
     {
-        client->text("Hello Client " + String(client->id()));
+        // client has connected
+    }
+    else if (type == WS_EVT_DATA)
+    {
+        // received data from client
+        String message = String((char *)data);
+        if (message.indexOf("ping") != -1)
+        {
+            // send a ping back to the client
+            client->text("pong");
+        }
     }
 }
-
 // Handle HTTP GET request for /
 void handleRootRequest(AsyncWebServerRequest *request)
 {
