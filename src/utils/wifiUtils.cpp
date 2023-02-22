@@ -3,7 +3,7 @@
 #include "WiFi.h"
 #include "../ui/ui.h"
 
-#include "WebServer.h"
+#include "WebServer/WebServer.h"
 
 String getKitsuDeckHostname()
 {
@@ -13,7 +13,6 @@ String getKitsuDeckHostname()
     return hostname;
 }
 
-// TODO: make this a task that gets invoked when entering the settings screen, so its non blocking
 String getNetworks()
 {
     String networks = "";

@@ -1,23 +1,18 @@
 #include <WiFi.h>
-#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 
-#include "wifiUtils.h"
+#include "../wifiUtils.h"
+#include "../Settings.h"
 #include "WebServer.h"
-#include "Settings.h"
 
-// define the server port
-#define SERVER_PORT 80
-// define the api endpoints
-#define ROOT_ENDPOINT "/"
-#define KITSUDECK_AUTH "/kitsuDeck/auth"
+// import the routes from the routes folder
+#include "routes/kitsuDeck/Auth.h"
 
 // define the webserver and websocket server objects
 AsyncWebServer server(SERVER_PORT);
-AsyncWebSocket webSocket("/ws");
+AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
 
-// TODO: Split this file into multiple files for better readability/structure
 // Handle WebSocket messages
 void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
@@ -58,53 +53,6 @@ void handleRootRequest(AsyncWebServerRequest *request)
 }
 
 // Handle HTTP POST request for /kitsuDeck/auth
-void handleKitsuDeckAuthRequest(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-    String requestData;
-    if (index == 0)
-    {
-        // Initialize a new buffer for storing the request body data
-        requestData = "";
-    }
-    // Append the incoming data to the buffer
-    for (size_t i = 0; i < len; i++)
-    {
-        requestData += (char)data[i];
-    }
-
-    if (index + len == total)
-    {
-        // If all of the request data has been received, parse the JSON data
-        StaticJsonDocument<200> doc;
-        StaticJsonDocument<200> response;
-        response["status"] = false;
-
-        DeserializationError error = deserializeJson(doc, requestData);
-        if (error)
-        {
-            // If there was an error parsing the JSON data, send a 400 Bad Request error response
-            request->send(400, "text/plain", "Bad Request");
-        }
-        else
-        {
-            // Extract the username and password from the JSON data
-            String username = doc["username"];
-            String password = doc["password"];
-            // Check if the username and password are valid
-            if (getSettings("computer_user") == username && getSettings("computer_password") == password)
-            {
-                // If the user is valid, send a 200 OK response with the authentication status
-                response["status"] = true;
-                request->send(200, "application/json", response.as<String>());
-            }
-            else
-            {
-                // If the user is invalid, send a 200 OK response with the authentication status
-                request->send(200, "application/json", response.as<String>());
-            }
-        }
-    }
-}
 
 // Start the web server and WebSocket server
 void startWebServer(void *parameter)

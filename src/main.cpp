@@ -6,13 +6,15 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_heap_caps.h"
 
 #include "ui/ui.h"
 #include "utils/Screen.h"
-#include "utils/WebServer.h"
+#include "utils/WebServer/WebServer.h"
 #include "utils/wifiUtils.h"
 #include "utils/settings.h"
 #include "utils/ScreenMessages.h"
+#include "utils/Database/Sqlite.h"
 
 #define TFT_BL 2
 const int TASK_STACK_SIZE = 8192;
@@ -76,9 +78,10 @@ void initializeLVGL()
 
 void setup()
 {
+  // Enable malloc in external memory
+  heap_caps_malloc_extmem_enable(0);
   // Initialize LVGL
   initializeLVGL();
-
   // Start the web server in a new task
   xTaskCreatePinnedToCore(
       startWebServer,
@@ -87,7 +90,8 @@ void setup()
       nullptr,
       1,
       nullptr,
-      0);
+      1);
+  initDatabase();
 }
 
 void loop()
