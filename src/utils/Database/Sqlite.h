@@ -4,7 +4,7 @@
 #include <sqlite3.h>
 
 int openDb(const char *filename, sqlite3 **db);
-int db_exec(sqlite3 *db, const char *sql);
+int db_exec(const char *sql);
 void initDatabase();
 
 #endif

@@ -47,6 +47,12 @@ void initializeLVGL()
   // Set the brightness of the display to the value in the settings file
   ledcWrite(0, getSettings("brightness").toInt());
 
+  // Init PSRAM
+  if (!psramInit())
+  {
+    // TODO: Add error message
+  }
+
   // Init LVGL
   lv_init();
 
@@ -78,10 +84,10 @@ void initializeLVGL()
 
 void setup()
 {
-  // Enable malloc in external memory
-  heap_caps_malloc_extmem_enable(0);
   // Initialize LVGL
   initializeLVGL();
+  // Enable malloc in external memory
+  heap_caps_malloc_extmem_enable(0);
   // Start the web server in a new task
   xTaskCreatePinnedToCore(
       startWebServer,

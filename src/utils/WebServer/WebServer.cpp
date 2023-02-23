@@ -7,7 +7,7 @@
 #include "WebServer.h"
 
 // import the routes from the routes folder
-#include "routes/kitsuDeck/Auth.h"
+#include "routes/kitsuDeck/kitsuDeck.h"
 
 // define the webserver and websocket server objects
 AsyncWebServer server(SERVER_PORT);
@@ -67,10 +67,16 @@ void startWebServer(void *parameter)
 
         // Setup HTTP GET handler for /
         server.on(ROOT_ENDPOINT, HTTP_GET, handleRootRequest);
+        // Setup HTTP POST handler for /kitsuDeck/auth
         server.on(
             KITSUDECK_AUTH, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request"); },
             NULL, handleKitsuDeckAuthRequest);
+        // Setup HTTP GET handler for /kitsuDeck/AddMakro
+        server.on(
+            KITSUDECK_ADD_MAKRO, HTTP_POST, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "You've made a POST request"); },
+            NULL, handleKitsuDeckAddMakroRequest);
         // 404
         server.onNotFound([](AsyncWebServerRequest *request)
                           { request->send(404, "text/plain", "What yre you looking for ?.?,\nAnyways ... i couldn't find what you are looking for, 404"); });

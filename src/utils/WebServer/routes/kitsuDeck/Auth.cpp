@@ -1,9 +1,8 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 
-#include "Auth.h"
+#include "kitsuDeck.h"
 #include "../../../Settings.h"
-
 
 void handleKitsuDeckAuthRequest(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
 {

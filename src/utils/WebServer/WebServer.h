@@ -7,6 +7,7 @@
 // define the api endpoints
 #define ROOT_ENDPOINT "/"
 #define KITSUDECK_AUTH "/kitsuDeck/auth"
+#define KITSUDECK_ADD_MAKRO "/kitsuDeck/addMakro"
 
 void startWebServer(void *parameter);
 
