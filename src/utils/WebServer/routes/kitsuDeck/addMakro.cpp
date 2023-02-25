@@ -7,7 +7,7 @@
 
 // Define the maximum size of the JSON document to handle (in bytes)
 #define MAX_JSON_SIZE 8192
-// TODO : Fix the memory leek that accures when i use that post request 5 - xx times
+
 void cleanup(uint8_t *&psram_buffer, DynamicJsonDocument &jsonBuffer)
 {
     free(psram_buffer);
