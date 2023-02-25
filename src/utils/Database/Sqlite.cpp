@@ -123,20 +123,18 @@ char *getMakrosFromDatabase()
 
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        const char *sql = "CREATE TABLE IF NOT EXISTS makros (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, key TEXT, description TEXT, type int, picture blob, invoked int DEFAULT 0)";
-
         const char *id = (const char *)sqlite3_column_text(stmt, 0);
         const char *name = (const char *)sqlite3_column_text(stmt, 1);
         const char *description = (const char *)sqlite3_column_text(stmt, 3);
 
-        size_t rowSize = snprintf(NULL, 0, "{\"id\":\"%s\",\"name\":\"%s\",\"value\":\"%s\"},", id, name, description);
+        size_t rowSize = snprintf(NULL, 0, "{\"id\":\"%s\",\"name\":\"%s\",\"description\":\"%s\"},", id, name, description);
         if (jsonOffset + rowSize >= PSRAM_MAX_SIZE)
         {
             Serial.println("Error: JSON buffer size exceeded.");
             break;
         }
 
-        jsonOffset += snprintf(&jsonBuffer[jsonOffset], PSRAM_MAX_SIZE - jsonOffset, "{\"id\":\"%s\",\"name\":\"%s\",\"value\":\"%s\"},", id, name, description);
+        jsonOffset += snprintf(&jsonBuffer[jsonOffset], PSRAM_MAX_SIZE - jsonOffset, "{\"id\":\"%s\",\"name\":\"%s\",\"description\":\"%s\"},", id, name, description);
     }
 
     sqlite3_finalize(stmt);
