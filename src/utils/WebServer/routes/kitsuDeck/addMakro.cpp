@@ -7,38 +7,29 @@
 
 // Define the maximum size of the JSON document to handle (in bytes)
 #define MAX_JSON_SIZE 8192
+// TODO : Fix the memory leek that accures when i use that post request 5 - xx times
+void cleanup(uint8_t *&psram_buffer, DynamicJsonDocument &jsonBuffer)
+{
+    free(psram_buffer);
+    psram_buffer = nullptr;
+    jsonBuffer.clear();
+}
 
-// create a buffer for storing the request body data
-uint8_t *psram_buffer = NULL;
-size_t psram_buffer_size = 0;
-
-// create and a buffer for storing the request body data
 void handleKitsuDeckAddMakroRequest(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
 {
+    static uint8_t *psram_buffer = nullptr;
+    static size_t psram_buffer_size = 0;
+    static DynamicJsonDocument jsonBuffer(1024);
+
     if (index == 0)
     {
         // If this is the first chunk of data, allocate a PSRAM buffer for storing the entire request body
-        if (psram_buffer != NULL)
+        psram_buffer_size = total;
+        psram_buffer = (uint8_t *)ps_malloc(psram_buffer_size);
+        if (psram_buffer == nullptr)
         {
-            free(psram_buffer);
-            psram_buffer_size = 0;
-        }
-        psram_buffer = (uint8_t *)ps_malloc(len);
-        psram_buffer_size = len;
-    }
-    else
-    {
-        // If this is not the first chunk of data, resize the PSRAM buffer if necessary
-        if (index + len > psram_buffer_size)
-        {
-            uint8_t *new_buffer = (uint8_t *)ps_realloc(psram_buffer, index + len);
-            if (new_buffer == NULL)
-            {
-                request->send(500, "text/plain", "Failed to allocate PSRAM buffer");
-                return;
-            }
-            psram_buffer = new_buffer;
-            psram_buffer_size = index + len;
+            request->send(500, "text/plain", "Failed to allocate PSRAM buffer");
+            return;
         }
     }
 
@@ -48,35 +39,39 @@ void handleKitsuDeckAddMakroRequest(AsyncWebServerRequest *request, uint8_t *dat
     if (index + len == total)
     {
         // If all of the request data has been received, parse the JSON data
-        StaticJsonDocument<MAX_JSON_SIZE> doc;
-
-        DeserializationError error = deserializeJson(doc, psram_buffer, total);
+        DeserializationError error = deserializeJson(jsonBuffer, psram_buffer, total);
         if (error)
         {
             // If there was an error parsing the JSON data, send a 400 Bad Request error response
             request->send(400, "text/plain", "DeserializationError");
+            cleanup(psram_buffer, jsonBuffer);
+            return;
+        }
+
+        // TODO: check if the user needs to be authenticated
+
+        // Extract data from the JSON document
+        const String name = jsonBuffer["name"].as<String>();
+        const String key = jsonBuffer["key"].as<String>();
+        const String description = jsonBuffer["description"].as<String>();
+        const String type = jsonBuffer["type"].as<String>();
+        const String picture = jsonBuffer["picture"].as<String>();
+
+        // Make mysql query
+        String query = "INSERT INTO `makros` (`name`, `key`, `description`, `type`, `picture`) VALUES ('" + name + "', '" + key + "', '" + description + "', '" + type + "', '" + picture + "')";
+        // Execute query
+        int rc = db_exec(query.c_str());
+        // check if the query was executed successfully
+        // Send a 200 OK response with the authentication status
+        if (rc == SQLITE_DONE)
+        {
+            request->send(200, "application/json", "{\"status\":true}");
         }
         else
         {
-            // TODO: check if the user needs to be authenticated
-
-            // Extract data from the JSON document
-            String name = doc["name"];
-            String key = doc["key"];
-            String description = doc["description"];
-            String type = doc["type"];
-            String picture = doc["picture"];
-            // make mysql query
-            String query = "INSERT INTO `makros` (`name`, `key`, `description`, `type`, `picture`) VALUES ('" + name + "', '" + key + "', '" + description + "', '" + type + "', '" + picture + "')";
-            // execute query
-            db_exec(query.c_str());
-            // send a 200 OK response with the authentication status
-            request->send(200, "application/json", doc.as<String>());
+            request->send(200, "application/json", "{\"status\":false}");
         }
-
-        // Free the PSRAM buffer
-        free(psram_buffer);
-        psram_buffer = NULL;
-        psram_buffer_size = 0;
+        // Free the PSRAM buffer and clear the JSON buffer
+        cleanup(psram_buffer, jsonBuffer);
     }
 }

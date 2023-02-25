@@ -8,6 +8,7 @@
 #define ROOT_ENDPOINT "/"
 #define KITSUDECK_AUTH "/kitsuDeck/auth"
 #define KITSUDECK_ADD_MAKRO "/kitsuDeck/addMakro"
+#define KITSUDECK_GET_MAKROS "/kitsuDeck/getMakros"
 
 void startWebServer(void *parameter);
 

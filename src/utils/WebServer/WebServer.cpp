@@ -72,11 +72,14 @@ void startWebServer(void *parameter)
             KITSUDECK_AUTH, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request"); },
             NULL, handleKitsuDeckAuthRequest);
-        // Setup HTTP GET handler for /kitsuDeck/AddMakro
+        // Setup HTTP POST handler for /kitsuDeck/AddMakro
         server.on(
             KITSUDECK_ADD_MAKRO, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request"); },
             NULL, handleKitsuDeckAddMakroRequest);
+        // Setup HTTP GET handler for /kitsuDeck/getMakros
+        server.on(KITSUDECK_GET_MAKROS, HTTP_GET, handleKitsuDeckGetMakrosRequest);
+
         // 404
         server.onNotFound([](AsyncWebServerRequest *request)
                           { request->send(404, "text/plain", "What yre you looking for ?.?,\nAnyways ... i couldn't find what you are looking for, 404"); });

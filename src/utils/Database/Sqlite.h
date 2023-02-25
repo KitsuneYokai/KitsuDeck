@@ -6,5 +6,6 @@
 int openDb(const char *filename, sqlite3 **db);
 int db_exec(const char *sql);
 void initDatabase();
+char *getMakrosFromDatabase();
 
 #endif
