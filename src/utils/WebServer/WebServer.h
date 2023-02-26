@@ -9,6 +9,7 @@
 #define KITSUDECK_AUTH "/kitsuDeck/auth"
 #define KITSUDECK_ADD_MAKRO "/kitsuDeck/addMakro"
 #define KITSUDECK_GET_MAKROS "/kitsuDeck/getMakros"
+#define KITSUDECK_GET_MAKRO_IMG "/kitsuDeck/getMacroImg" // TODO: rename Makro to Macro in all files (oops :D)
 
 void startWebServer(void *parameter);
 

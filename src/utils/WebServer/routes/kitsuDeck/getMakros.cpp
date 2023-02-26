@@ -7,14 +7,14 @@
 
 void handleKitsuDeckGetMakrosRequest(AsyncWebServerRequest *request)
 {
-    char *buffer = getMakrosFromDatabase();
-    if (buffer == nullptr)
+    String makros = selectAll("SELECT id,name,description,invoked FROM makros");
+    // If the macro is found, send a 200 OK response with the macro data
+    if (makros != "No rows returned")
     {
-        request->send(500, "text/plain", "Error fetching data from database.");
+        request->send(200, "application/json", makros.c_str());
     }
     else
     {
-        request->send(200, "application/json", buffer);
-        free(buffer);
+        request->send(200, "application/json", makros.c_str());
     }
 }

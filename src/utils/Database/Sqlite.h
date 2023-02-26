@@ -5,7 +5,9 @@
 
 int openDb(const char *filename, sqlite3 **db);
 int db_exec(const char *sql);
+String selectOne(const char *query);
+String selectAll(const char *query);
+
 void initDatabase();
-char *getMakrosFromDatabase();
 
 #endif

@@ -5,9 +5,6 @@
 #include "../../../Settings.h"
 #include "../../../Database/Sqlite.h"
 
-// Define the maximum size of the JSON document to handle (in bytes)
-#define MAX_JSON_SIZE 8192
-
 void cleanup(uint8_t *&psram_buffer, DynamicJsonDocument &jsonBuffer)
 {
     free(psram_buffer);
