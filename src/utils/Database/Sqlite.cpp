@@ -178,7 +178,7 @@ void initDatabase()
         return;
     }
 
-    const char *sql = "CREATE TABLE IF NOT EXISTS makros (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, key TEXT, description TEXT, type int, picture blob, invoked int DEFAULT 0)";
+    const char *sql = "CREATE TABLE IF NOT EXISTS makros (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, key JSON, description TEXT, type int, picture blob, invoked int DEFAULT 0)";
     rc = db_exec(sql);
     if (rc != SQLITE_OK)
     {
