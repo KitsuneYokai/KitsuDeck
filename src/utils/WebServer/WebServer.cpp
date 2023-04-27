@@ -67,30 +67,38 @@ void startWebServer(void *parameter)
 
         // Setup HTTP GET handler for /
         server.on(ROOT_ENDPOINT, HTTP_GET, handleRootRequest);
+
         // Setup HTTP POST handler for /kitsuDeck/auth
         server.on(
             KITSUDECK_AUTH, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request"); },
             NULL, handleKitsuDeckAuthRequest);
+
         // Setup HTTP POST handler for /kitsuDeck/AddMakro
         server.on(
             KITSUDECK_ADD_MAKRO, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request"); },
             NULL, handleKitsuDeckAddMakroRequest);
+
         // Setup HTTP GET handler for /kitsuDeck/getMakros
         server.on(KITSUDECK_GET_MAKROS, HTTP_GET, handleKitsuDeckGetMakrosRequest);
+
         // Setup HTTP POST handler for /kitsuDeck/getMakroImg
         server.on(
             KITSUDECK_GET_MAKRO_IMG, HTTP_POST, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "You've made a POST request\n\n WoW"); },
             NULL, handleGetKitsuDeckMacroImg);
-        // 404
+
+        // Setup HTTP GET handler for /kitsuDeck/getSystemInfo
+        server.on(KITSU_DECK_GET_SYSTEM_INFO, HTTP_GET, handleGetKitsuDeckSystemInfo);
+
+        // Setup 404
         server.onNotFound([](AsyncWebServerRequest *request)
                           { request->send(404, "text/plain", "What yre you looking for ?.?,\nAnyways ... i couldn't find what you are looking for, 404"); });
+
         // Setup WebSocket server
         webSocket.onEvent(handleWebSocketMessage);
         server.addHandler(&webSocket);
-
         server.begin();
 
         // Wait for incoming client requests and WebSocket messages

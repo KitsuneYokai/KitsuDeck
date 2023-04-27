@@ -1,14 +1,12 @@
 #include <sqlite3.h>
 #include <SD.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 #include "Sqlite.h"
 
 // define database file name
 #define DATABASE_FILE "/kitsuDeck.db"
-
-sqlite3 *db;
-// TODO: PSRAM buffer for storing the entire request body
 
 int openDb(const char *filename, sqlite3 **db)
 {
@@ -18,15 +16,16 @@ int openDb(const char *filename, sqlite3 **db)
         Serial.printf("Can't open database: %s \n", sqlite3_errmsg(*db));
         return rc;
     }
+
     return rc;
 }
 
-char *zErrMsg = 0;
 int db_exec(const char *sql)
 {
     int rc = SQLITE_OK;
     char *errMsg = NULL;
     sqlite3_stmt *stmt = NULL;
+    sqlite3 *db = NULL;
     rc = openDb("/sd" DATABASE_FILE, &db);
     if (rc != SQLITE_OK)
     {
@@ -58,8 +57,10 @@ int db_exec(const char *sql)
     return rc;
 }
 
-String selectOne(const char *query)
+// TODO: Fix this function, right now it makes the get macro img function load infinitly / crash the esp32, or simply returns "null" on the picture col, 1kb of data seems okay tough
+DynamicJsonDocument selectOne(const char *query)
 {
+    sqlite3 *db = NULL;
     int rc = SQLITE_OK;
     char *errMsg = NULL;
     sqlite3_stmt *stmt = NULL;
@@ -67,7 +68,7 @@ String selectOne(const char *query)
     if (rc != SQLITE_OK)
     {
         log_e("Failed to open database");
-        return "Failed to open database";
+        return DynamicJsonDocument(0);
     }
 
     rc = sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
@@ -76,7 +77,7 @@ String selectOne(const char *query)
         log_e("Failed to prepare statement: %s", sqlite3_errmsg(db));
         sqlite3_finalize(stmt);
         sqlite3_close(db);
-        return "Failed to prepare statement";
+        return DynamicJsonDocument(0);
     }
 
     rc = sqlite3_step(stmt);
@@ -85,32 +86,35 @@ String selectOne(const char *query)
         log_e("Failed to execute statement: %s", sqlite3_errmsg(db));
         sqlite3_finalize(stmt);
         sqlite3_close(db);
-        return "No rows returned";
+        return DynamicJsonDocument(0);
     }
 
-    // TODO: still afraid of the ArduinoJson
-    String result = "{";
+    DynamicJsonDocument doc(10 * 1024);
+    JsonObject obj = doc.to<JsonObject>();
     for (int i = 0; i < sqlite3_column_count(stmt); i++)
     {
-        if (i > 0)
+        const char *col_name = sqlite3_column_name(stmt, i);
+        std::unique_ptr<char[]> col_name_copy(new char[strlen(col_name) + 1]);
+        strcpy(col_name_copy.get(), col_name);
+        if (sqlite3_column_type(stmt, i) == SQLITE_NULL)
         {
-            result += ",";
+            obj[col_name_copy.get()] = nullptr;
         }
-        result += "\"";
-        result += sqlite3_column_name(stmt, i);
-        result += "\":\"";
-        result += (char *)sqlite3_column_text(stmt, i);
-        result += "\"";
+        else
+        {
+            obj[col_name_copy.get()] = (char *)sqlite3_column_text(stmt, i);
+        }
     }
-    result += "}";
+
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 
-    return result;
+    return doc;
 }
 
-String selectAll(const char *query)
+DynamicJsonDocument selectAll(const char *query)
 {
+    sqlite3 *db = NULL;
     int rc = SQLITE_OK;
     char *errMsg = NULL;
     sqlite3_stmt *stmt = NULL;
@@ -118,7 +122,7 @@ String selectAll(const char *query)
     if (rc != SQLITE_OK)
     {
         log_e("Failed to open database");
-        return "Failed to open database";
+        return DynamicJsonDocument(0);
     }
 
     rc = sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
@@ -127,32 +131,24 @@ String selectAll(const char *query)
         log_e("Failed to prepare statement: %s", sqlite3_errmsg(db));
         sqlite3_finalize(stmt);
         sqlite3_close(db);
-        return "Failed to prepare statement";
+        return DynamicJsonDocument(0);
     }
 
-    String result = "[";
+    DynamicJsonDocument result(2 * 4096);
+    JsonArray data = result.to<JsonArray>();
+
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        result += "{";
+        JsonObject obj = data.createNestedObject();
         for (int i = 0; i < sqlite3_column_count(stmt); i++)
         {
-            if (i > 0)
-            {
-                result += ",";
-            }
-            result += "\"";
-            result += sqlite3_column_name(stmt, i);
-            result += "\":\"";
-            result += (char *)sqlite3_column_text(stmt, i);
-            result += "\"";
+            const char *col_name = sqlite3_column_name(stmt, i);
+            char *col_name_copy = strdup(col_name); // create a copy of the column name string
+            obj[col_name_copy] = (char *)sqlite3_column_text(stmt, i);
+            free(col_name_copy);
         }
-        result += "},";
     }
-    if (result.endsWith(","))
-    {
-        result = result.substring(0, result.length() - 1); // Remove the trailing comma
-    }
-    result += "]";
+
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 
@@ -161,6 +157,7 @@ String selectAll(const char *query)
 
 void initDatabase()
 {
+    sqlite3 *db = NULL;
     sqlite3_initialize();
 
     if (!SD.exists(DATABASE_FILE))

@@ -7,14 +7,9 @@
 
 void handleKitsuDeckGetMakrosRequest(AsyncWebServerRequest *request)
 {
-    String makros = selectAll("SELECT id,name,description,invoked FROM makros");
-    // If the macro is found, send a 200 OK response with the macro data
-    if (makros != "No rows returned")
-    {
-        request->send(200, "application/json", makros.c_str());
-    }
-    else
-    {
-        request->send(200, "application/json", makros.c_str());
-    }
+    DynamicJsonDocument makro = selectAll("SELECT id, name, description, invoked FROM makros");
+    String output;
+    serializeJson(makro, output);
+
+    request->send(200, "application/json; charset=utf-8", output);
 }
