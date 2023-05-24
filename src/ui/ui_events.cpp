@@ -22,15 +22,31 @@ void initSettings(lv_event_t *e)
 	lv_roller_set_options(ui_WifiSsidRoller, wifiSsid.c_str(), LV_ANIM_ON);
 	lv_textarea_set_text(ui_WifiPasswordTextInput, wifiPassword.c_str());
 
-	// set the values of the computer settings
-	String computerUser = getSettings("computer_user");
-	String computerPassword = getSettings("computer_password");
-	lv_textarea_set_text(ui_ComputerAuthUsername, computerUser.c_str());
-	lv_textarea_set_text(ui_ComputerAuthPassword, computerPassword.c_str());
+	// set the wifi ip adress if connected
+	if (WiFi.status() == WL_CONNECTED)
+	{
+		String ip = "Connected: " + WiFi.localIP().toString();
+		lv_label_set_text(ui_WifiTestResultLabel, ip.c_str());
+	}
+	else
+	{
+		lv_label_set_text(ui_WifiTestResultLabel, "Not Connected");
+	}
+	// set the values of the Auth Settings
+	String pin = getSettings("auth_pin");
+	if (pin != "")
+	{
+		lv_label_set_text(ui_AuthStatus, "Status: Secured");
+		lv_obj_clear_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+	}
+	else
+	{
+		lv_label_set_text(ui_AuthStatus, "Status: Not Secured");
+		lv_obj_add_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+	}
 
 	// SettingsBrightness ark init
 	String value = getSettings("brightness");
-	// convert the value 255 to be maximum 100
 	value = String((value.toInt() * 100) / 255);
 	lv_arc_set_value(ui_ScreenBrightnessArk, value.toInt());
 }
@@ -82,13 +98,46 @@ void TestWifiSettings(lv_event_t *e)
 	}
 }
 
-void SaveComputerSettings(lv_event_t *e)
+void SaveComputerAuthSettings(lv_event_t *e)
 {
-	String username = lv_textarea_get_text(ui_ComputerAuthUsername);
-	String password = lv_textarea_get_text(ui_ComputerAuthPassword);
-
-	setSettings("computer_user", username);
-	setSettings("computer_password", password);
+	String currentPin = getSettings("auth_pin");
+	String pin = lv_textarea_get_text(ui_ComputerAuthPin);
+	String newPin = lv_textarea_get_text(ui_ComputerAuthPinNew);
+	if (currentPin != "")
+	{
+		if (pin == currentPin)
+		{
+			setSettings("auth_pin", newPin);
+			lv_label_set_text(ui_AuthStatus, "Status: New Pin Set");
+			if (newPin == "")
+			{
+				lv_obj_add_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+			}
+			else
+			{
+				lv_obj_clear_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+			}
+		}
+		else
+		{
+			lv_label_set_text(ui_AuthStatus, "Status: Wrong Pin");
+		}
+	}
+	else
+	{
+		setSettings("auth_pin", pin);
+		lv_label_set_text(ui_AuthStatus, "Status: New Pin Set");
+		if (pin == "")
+		{
+			lv_obj_add_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+		}
+		else
+		{
+			lv_obj_clear_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
+		}
+	}
+	lv_textarea_set_text(ui_ComputerAuthPinNew, "");
+	lv_textarea_set_text(ui_ComputerAuthPin, "");
 }
 
 void setSettingsBrightnessArkValue(lv_event_t *e)

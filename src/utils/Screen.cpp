@@ -1,4 +1,3 @@
-
 #include <Arduino_GFX_Library.h>
 #include <lvgl.h>
 #include "touch.h"

@@ -6,41 +6,49 @@
 #include "../Settings.h"
 #include "WebServer.h"
 
-// import the routes from the routes folder
-#include "routes/kitsuDeck/kitsuDeck.h"
-
-// define the webserver and websocket server objects
+#include "../wifiUtils.h"
+// define the web server and websocket server objects
 AsyncWebServer server(SERVER_PORT);
 AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
 
-// Handle WebSocket messages
 void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
+    // Echo the received message back to the client
+    // Send a text if the user connects
     if (type == WS_EVT_CONNECT)
     {
-        // client has connected
+        client->text("Hello from KitsuDeck!");
     }
-    else if (type == WS_EVT_DATA)
+    else if (type == WS_EVT_DISCONNECT)
     {
-        // received data from client
-        String message = String((char *)data);
-        if (message.indexOf("ping") != -1)
-        {
-            // send a ping back to the client
-            client->text("pong");
-        }
+        // Client disconnected, perform necessary cleanup
+        // For example, remove the client from any data structures
+        // and release any associated resources
+        // ...
+
+        return; // Exit the function to prevent further processing
+    }
+
+    // Check if the client is still connected before sending a message
+    if (client->status() == WS_CONNECTED)
+    {
+        client->text((char *)data, len);
     }
 }
 // Handle HTTP GET request for /
 void handleRootRequest(AsyncWebServerRequest *request)
 {
     // make a json
+    String ip = WiFi.localIP().toString();
+    String hostname = getKitsuDeckHostname();
     StaticJsonDocument<200> doc;
-    doc["message"] = "Hi, Im KitsuDeck, nice to meet you! Im a Makro keyboard that is connected to some pc in your Network, so please dont delete me from your Network, because someone in your network is using me! :D here is a link to my github repository: https://github.com/KitsuneYokai/KitsuDeck";
+    doc["message"] = "Hi, Im KitsuDeck, nice to meet you!\nIm a Macro keyboard that is connected to some pc in your Network, so please dont delete me from your Network, because someone in your network is using me!\nHere is a link to my github repository: https://github.com/KitsuneYokai/KitsuDeck";
     doc["status"] = true;
+    doc["ip"] = ip;
+    doc["hostname"] = hostname;
     doc["version"] = "0.0.1";
     // if any auth variable in the settings is set, let it be only the username, set the json protected value to true
-    if (getSettings("computer_user") != "" || getSettings("computer_password") != "")
+    if (getSettings("auth_pin") != "")
     {
         doc["protected"] = true;
     }
@@ -51,50 +59,71 @@ void handleRootRequest(AsyncWebServerRequest *request)
 
     request->send(200, "text/plain", doc.as<String>());
 }
+// Handle HTTP POST request for /auth
+void handleAuthRequest(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+{
+    String requestData;
+    if (index == 0)
+    {
+        requestData = "";
+    }
+    for (size_t i = 0; i < len; i++)
+    {
+        requestData += (char)data[i];
+    }
 
-// Handle HTTP POST request for /kitsuDeck/auth
+    if (index + len == total)
+    {
+        StaticJsonDocument<200> doc;
+        StaticJsonDocument<200> response;
+        response["status"] = false;
 
+        DeserializationError error = deserializeJson(doc, requestData);
+        if (error)
+        {
+            request->send(400, "text/plain", "Bad Request");
+        }
+        else
+        {
+            String pin = doc["auth_pin"];
+            if (getSettings("auth_pin") == pin)
+            {
+                response["status"] = true;
+                request->send(200, "application/json", response.as<String>());
+            }
+            else
+            {
+                request->send(200, "application/json", response.as<String>());
+            }
+        }
+    }
+}
 // Start the web server and WebSocket server
 void startWebServer(void *parameter)
 {
     vTaskDelay(3000 / portTICK_PERIOD_MS);
+
     if (checkSettingsWifiBool())
     {
         Serial.println("Starting Web/WebSocket server");
 
         // Connect to WiFi
-        connectToWifi(getSettings("wifi_ssid"), getSettings("wifi_password"));
+        bool wifi_connect = connectToWifi(getSettings("wifi_ssid"), getSettings("wifi_password"));
+
+        if (!wifi_connect)
+        {
+            Serial.println("Failed to connect to WiFi");
+            vTaskDelete(NULL);
+        }
 
         // Setup HTTP GET handler for /
         server.on(ROOT_ENDPOINT, HTTP_GET, handleRootRequest);
-
-        // Setup HTTP POST handler for /kitsuDeck/auth
+        // Setup auth endpoint
         server.on(
-            KITSUDECK_AUTH, HTTP_POST, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", "You've made a POST request"); },
-            NULL, handleKitsuDeckAuthRequest);
-
-        // Setup HTTP POST handler for /kitsuDeck/AddMakro
-        server.on(
-            KITSUDECK_ADD_MAKRO, HTTP_POST, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", "You've made a POST request"); },
-            NULL, handleKitsuDeckAddMakroRequest);
-
-        // Setup HTTP GET handler for /kitsuDeck/getMakros
-        server.on(KITSUDECK_GET_MAKROS, HTTP_GET, handleKitsuDeckGetMakrosRequest);
-
-        // Setup HTTP POST handler for /kitsuDeck/getMakroImg
-        server.on(
-            KITSUDECK_GET_MAKRO_IMG, HTTP_POST, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", "You've made a POST request\n\n WoW"); },
-            NULL, handleGetKitsuDeckMacroImg);
-
-        // Setup HTTP GET handler for /kitsuDeck/getSystemInfo
-        server.on(KITSU_DECK_GET_SYSTEM_INFO, HTTP_GET, handleGetKitsuDeckSystemInfo);
-
+            Auth_ENDPOINT, HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, handleAuthRequest);
         // Setup 404
         server.onNotFound([](AsyncWebServerRequest *request)
-                          { request->send(404, "text/plain", "What yre you looking for ?.?,\nAnyways ... i couldn't find what you are looking for, 404"); });
+                          { request->send(404, "text/plain", "What are you looking for?. Anyways... I couldn't find what you are looking for, 404"); });
 
         // Setup WebSocket server
         webSocket.onEvent(handleWebSocketMessage);
@@ -104,9 +133,13 @@ void startWebServer(void *parameter)
         // Wait for incoming client requests and WebSocket messages
         while (true)
         {
-            vTaskDelay(1000);           // Wait for 1 second
-            webSocket.cleanupClients(); // Cleanup disconnected clients
+            vTaskDelay(1000 / portTICK_PERIOD_MS); // Wait for 1 second
+            webSocket.cleanupClients();            // Cleanup disconnected clients
         }
+
+        // Cleanup and release resources before deleting the task (this part is not reached in the current implementation)
+        server.end();
+        webSocket.closeAll();
     }
     else
     {

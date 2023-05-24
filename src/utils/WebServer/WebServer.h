@@ -6,12 +6,8 @@
 #define WEBSOCKET_ENDPOINT "/ws"
 // define the api endpoints
 #define ROOT_ENDPOINT "/"
-#define KITSUDECK_AUTH "/kitsuDeck/auth"
-#define KITSUDECK_ADD_MAKRO "/kitsuDeck/addMakro"
-#define KITSUDECK_GET_MAKROS "/kitsuDeck/getMakros"
-#define KITSUDECK_GET_MAKRO_IMG "/kitsuDeck/getMacroImg" // TODO: rename Makro to Macro in all files (oops :D)
-#define KITSU_DECK_GET_SYSTEM_INFO "/kitsuDeck/getSystemInfo"
-
+#define Auth_ENDPOINT "/auth"
+#define KITSU_DECK_GET_SYSTEM_INFO "/sysinfo"
 void startWebServer(void *parameter);
 
 #endif

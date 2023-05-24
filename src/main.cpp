@@ -22,7 +22,7 @@ const int TASK_STACK_SIZE = 8192;
 void initializeLVGL()
 {
   Serial.begin(115200);
-  Serial.println("KitsuDeck v0.1 - ESP32 Lets Go!");
+  Serial.println("KitsuDeck v0.1 - Lets Go!");
 
   // Init Display
   gfx->begin();

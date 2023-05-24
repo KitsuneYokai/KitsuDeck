@@ -24,12 +24,12 @@ void createSettings()
         doc["brightness"] = 100;
         doc["wifi_ssid"] = "";
         doc["wifi_password"] = "";
-        doc["computer_user"] = "";
-        doc["computer_password"] = "";
+        doc["auth_pin"] = "";
         serializeJson(doc, file);
         file.close();
     }
 }
+
 bool checkSettingsWifiBool()
 {
     if (SD.exists(settingsFile))

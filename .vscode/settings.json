@@ -68,6 +68,8 @@
         "lvgl.h": "c",
         "arduinojson.h": "c",
         "touch.h": "c",
-        "settings.h": "c"
-    }
+        "settings.h": "c",
+        "regex": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

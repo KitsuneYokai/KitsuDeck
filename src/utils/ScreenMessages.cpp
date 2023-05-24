@@ -1,7 +1,7 @@
 #include "ScreenMessages.h"
 #include "utils/Screen.h"
 
-// error message for when the SD Card is not found
+// error message for sd card error
 void errorSD()
 {
     gfx->setCursor(0, 0);
