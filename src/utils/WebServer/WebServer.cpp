@@ -13,26 +13,60 @@ AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
 
 void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
-    // Echo the received message back to the client
-    // Send a text if the user connects
+    bool isAuthed = false;
+    // Handle WebSocket event
     if (type == WS_EVT_CONNECT)
     {
-        client->text("Hello from KitsuDeck!");
+        if (getSettings("auth_pin") != "")
+        {
+            StaticJsonDocument<200> doc;
+            doc["event"] = "CLIENT_AUTH";
+            doc["protected"] = true;
+            client->text(doc.as<String>());
+        }
+        else
+        {
+            isAuthed = true;
+            StaticJsonDocument<200> doc;
+            doc["event"] = "CLIENT_AUTH";
+            doc["protected"] = false;
+            client->text(doc.as<String>());
+        }
     }
     else if (type == WS_EVT_DISCONNECT)
     {
-        // Client disconnected, perform necessary cleanup
-        // For example, remove the client from any data structures
-        // and release any associated resources
-        // ...
-
-        return; // Exit the function to prevent further processing
+        return;
     }
-
-    // Check if the client is still connected before sending a message
-    if (client->status() == WS_CONNECTED)
+    else if (type == WS_EVT_ERROR)
     {
-        client->text((char *)data, len);
+        Serial.printf("WebSocket client #%u error(%u): %s\n", client->id(), *((uint16_t *)arg), (char *)data);
+    }
+    else if (type == WS_EVT_DATA)
+    {
+        DynamicJsonDocument doc(4096);
+        DeserializationError error = deserializeJson(doc, data);
+        if (doc["event"] == "CLIENT_AUTH")
+        {
+            String pin = doc["auth_pin"];
+            if (getSettings("auth_pin") == pin)
+            {
+                isAuthed = true;
+                DynamicJsonDocument response(200);
+                response["event"] = "CLIENT_AUTH_SUCCESS";
+                client->text(response.as<String>());
+            }
+            else
+            {
+                DynamicJsonDocument response(200);
+                response["event"] = "CLIENT_AUTH_FAILED";
+                client->text(response.as<String>());
+                client->close();
+            }
+        }
+        if (isAuthed)
+        {
+            // TODO: HANDLE THE EVENTS DONT FORGET TO MAKE A PIN REQUEST WITH EVERY EVENT, IF THE PIN IS NOT RIGHT, CLOSE THE CONNECTION
+        }
     }
 }
 // Handle HTTP GET request for /
@@ -41,7 +75,7 @@ void handleRootRequest(AsyncWebServerRequest *request)
     // make a json
     String ip = WiFi.localIP().toString();
     String hostname = getKitsuDeckHostname();
-    StaticJsonDocument<200> doc;
+    DynamicJsonDocument doc(200);
     doc["message"] = "Hi, Im KitsuDeck, nice to meet you!\nIm a Macro keyboard that is connected to some pc in your Network, so please dont delete me from your Network, because someone in your network is using me!\nHere is a link to my github repository: https://github.com/KitsuneYokai/KitsuDeck";
     doc["status"] = true;
     doc["ip"] = ip;
@@ -74,8 +108,8 @@ void handleAuthRequest(AsyncWebServerRequest *request, uint8_t *data, size_t len
 
     if (index + len == total)
     {
-        StaticJsonDocument<200> doc;
-        StaticJsonDocument<200> response;
+        DynamicJsonDocument doc(200);
+        DynamicJsonDocument response(200);
         response["status"] = false;
 
         DeserializationError error = deserializeJson(doc, requestData);
