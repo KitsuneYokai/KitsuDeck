@@ -117,6 +117,7 @@ void SaveComputerAuthSettings(lv_event_t *e)
 			{
 				lv_obj_clear_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
 			}
+			// TODO: restart the webserver task
 		}
 		else
 		{

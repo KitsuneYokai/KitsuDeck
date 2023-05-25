@@ -5,6 +5,7 @@
 #include "../wifiUtils.h"
 #include "../Settings.h"
 #include "WebServer.h"
+#include "../Screen.h"
 
 #include "../wifiUtils.h"
 // define the web server and websocket server objects
@@ -13,7 +14,6 @@ AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
 
 void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
-    bool isAuthed = false;
     // Handle WebSocket event
     if (type == WS_EVT_CONNECT)
     {
@@ -26,7 +26,6 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
         }
         else
         {
-            isAuthed = true;
             StaticJsonDocument<200> doc;
             doc["event"] = "CLIENT_AUTH";
             doc["protected"] = false;
@@ -50,7 +49,6 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
             String pin = doc["auth_pin"];
             if (getSettings("auth_pin") == pin)
             {
-                isAuthed = true;
                 DynamicJsonDocument response(200);
                 response["event"] = "CLIENT_AUTH_SUCCESS";
                 client->text(response.as<String>());
@@ -63,9 +61,25 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
                 client->close();
             }
         }
-        if (isAuthed)
+
+        if (doc["event"] == "SET_BRIGHTNESS")
         {
-            // TODO: HANDLE THE EVENTS DONT FORGET TO MAKE A PIN REQUEST WITH EVERY EVENT, IF THE PIN IS NOT RIGHT, CLOSE THE CONNECTION
+            if (getSettings("auth_pin") != doc["auth_pin"])
+            {
+                client->close();
+            }
+            else
+            {
+                setLCDBrightness(doc["value"].as<int>());
+                setSettings("brightness", String(doc["value"].as<int>()));
+            }
+        }
+        if (doc["event"] == "GET_BRIGHTNESS")
+        {
+            DynamicJsonDocument response(200);
+            response["event"] = "GET_BRIGHTNESS";
+            response["value"] = getSettings("brightness").toInt();
+            client->text(response.as<String>());
         }
     }
 }
@@ -167,7 +181,7 @@ void startWebServer(void *parameter)
         // Wait for incoming client requests and WebSocket messages
         while (true)
         {
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Wait for 1 second
+            vTaskDelay(5000 / portTICK_PERIOD_MS); // Wait for 5 seconds
             webSocket.cleanupClients();            // Cleanup disconnected clients
         }
 

@@ -2,7 +2,6 @@
 # KitsuDeck
 
 KitsuDeck will be a makro keyboard for a ESP32 with a 7" touch screen display.
-(paused for now, waiting for aliexpress to ship the parts)
 It will be able to start programs on your pc, or invoke F13- F... keys / makros, or even
 controll your spotify client.
 
