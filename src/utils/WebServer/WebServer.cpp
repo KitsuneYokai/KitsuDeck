@@ -8,6 +8,8 @@
 #include "../Screen.h"
 
 #include "../wifiUtils.h"
+
+#include "../Database/Sqlite.h"
 // define the web server and websocket server objects
 AsyncWebServer server(SERVER_PORT);
 AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
@@ -44,6 +46,7 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
     {
         DynamicJsonDocument doc(4096);
         DeserializationError error = deserializeJson(doc, data);
+        // pin check event
         if (doc["event"] == "CLIENT_AUTH")
         {
             String pin = doc["auth_pin"];
@@ -61,7 +64,8 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
                 client->close();
             }
         }
-
+        // TODO: seperate this into different files and make it more readable
+        // set brightness event
         if (doc["event"] == "SET_BRIGHTNESS")
         {
             if (getSettings("auth_pin") != doc["auth_pin"])
@@ -74,12 +78,29 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
                 setSettings("brightness", String(doc["value"].as<int>()));
             }
         }
+        // get brightness event (returns the brightness value)
         if (doc["event"] == "GET_BRIGHTNESS")
         {
             DynamicJsonDocument response(200);
             response["event"] = "GET_BRIGHTNESS";
             response["value"] = getSettings("brightness").toInt();
             client->text(response.as<String>());
+        }
+        // get macro images event (returns the macro images)
+        if (doc["event"] == "GET_MACRO_IMAGES")
+        {
+            if (getSettings("auth_pin") != doc["auth_pin"])
+            {
+                client->close();
+            }
+            else
+            {
+                DynamicJsonDocument response(4096);
+                response["event"] = "GET_MACRO_IMAGES";
+                DynamicJsonDocument images = selectAll("SELECT * FROM macro_images");
+                response["images"] = images;
+                client->text(response.as<String>());
+            }
         }
     }
 }

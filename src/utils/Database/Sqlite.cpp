@@ -57,7 +57,6 @@ int db_exec(const char *sql)
     return rc;
 }
 
-// TODO: Fix this function, right now it makes the get macro img function load infinitly / crash the esp32, or simply returns "null" on the picture col, 1kb of data seems okay tough
 DynamicJsonDocument selectOne(const char *query)
 {
     sqlite3 *db = NULL;
@@ -89,7 +88,7 @@ DynamicJsonDocument selectOne(const char *query)
         return DynamicJsonDocument(0);
     }
 
-    DynamicJsonDocument doc(10 * 1024);
+    DynamicJsonDocument doc(4096);
     JsonObject obj = doc.to<JsonObject>();
     for (int i = 0; i < sqlite3_column_count(stmt); i++)
     {
@@ -175,14 +174,10 @@ void initDatabase()
         return;
     }
 
-    const char *sql = "CREATE TABLE IF NOT EXISTS macros (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, key JSON, description TEXT, type int, picture blob, invoked int DEFAULT 0)";
-    rc = db_exec(sql);
-    if (rc != SQLITE_OK)
-    {
-        Serial.println("Error: failed to create table.");
-        // TODO: add error screen here
-        return;
-    }
+    const char *sqlMacros = "CREATE TABLE IF NOT EXISTS macros(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, invoked INTEGER DEFAULT(0), action JSON, image INTEGER, CONSTRAINT macros_FK FOREIGN KEY(id) REFERENCES macro_images(id) ON DELETE SET NULL);";
+    rc = db_exec(sqlMacros);
+    const char *sqlMacroImages = "CREATE TABLE IF NOT EXISTS macro_images(id INTEGER PRIMARY KEY AUTOINCREMENT, image BLOB);";
+    rc = db_exec(sqlMacroImages);
 
     sqlite3_close(db);
 }
