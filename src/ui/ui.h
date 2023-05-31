@@ -77,6 +77,7 @@ void ui_event_DeviceInformation(lv_event_t * e);
 extern lv_obj_t * ui_DeviceInformation;
 extern lv_obj_t * ui_DeviceInformationHeader;
 extern lv_obj_t * ui_KitsuDeckVersion;
+extern lv_obj_t * ui_CreatedByInformation;
 extern lv_obj_t * ui_SettingsKeyboardText;
 extern lv_obj_t * ui_SettingsKeyboardNumber;
 extern lv_obj_t * ui____initial_actions0;

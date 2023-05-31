@@ -325,6 +325,13 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_KitsuDeckVersion, LV_ALIGN_CENTER);
     lv_label_set_text(ui_KitsuDeckVersion, "Version: ");
 
+    ui_CreatedByInformation = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_CreatedByInformation, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_CreatedByInformation, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_CreatedByInformation, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CreatedByInformation, "Created by:\nKitsuneYokai");
+    lv_obj_set_style_text_align(ui_CreatedByInformation, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     ui_SettingsKeyboardText = lv_keyboard_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsKeyboardText, lv_pct(100));
     lv_obj_set_height(ui_SettingsKeyboardText, lv_pct(40));
