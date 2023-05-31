@@ -16,13 +16,15 @@
 #include "utils/ScreenMessages.h"
 #include "utils/Database/Sqlite.h"
 
+#include "main.h"
+
 #define TFT_BL 2
 const int TASK_STACK_SIZE = 8192;
 
 void initializeLVGL()
 {
   Serial.begin(115200);
-  Serial.println("KitsuDeck v0.1 - Lets Go!");
+  Serial.println("KitsuDeck v" VERSION " - Lets Go!");
 
   // Init Display
   gfx->begin();

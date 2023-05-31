@@ -10,6 +10,10 @@
 #include "../wifiUtils.h"
 
 #include "../Database/Sqlite.h"
+#include "../../main.h"
+
+// include the ui.h file to get the ui elements, so i can set the brightness ark value for example
+#include "../../ui/ui.h"
 // define the web server and websocket server objects
 AsyncWebServer server(SERVER_PORT);
 AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
@@ -76,6 +80,9 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
             {
                 setLCDBrightness(doc["value"].as<int>());
                 setSettings("brightness", String(doc["value"].as<int>()));
+                // when the brightness is set, the value of the ark should be set too, this works, but for some reason it might not work 1 out of 10 times
+                int value = (doc["value"].as<int>() * 100) / 255;
+                lv_arc_set_value(ui_ScreenBrightnessArk, value);
             }
         }
         // get brightness event (returns the brightness value)
@@ -115,7 +122,7 @@ void handleRootRequest(AsyncWebServerRequest *request)
     doc["status"] = true;
     doc["ip"] = ip;
     doc["hostname"] = hostname;
-    doc["version"] = "0.0.1";
+    doc["version"] = VERSION;
     // if any auth variable in the settings is set, let it be only the username, set the json protected value to true
     if (getSettings("auth_pin") != "")
     {
@@ -181,7 +188,7 @@ void startWebServer(void *parameter)
 
         if (!wifi_connect)
         {
-            Serial.println("Failed to connect to WiFi");
+            Serial.println("Failed to connect to WiFi - exiting task");
             vTaskDelete(NULL);
         }
 

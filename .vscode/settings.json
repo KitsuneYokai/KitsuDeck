@@ -69,7 +69,9 @@
         "arduinojson.h": "c",
         "touch.h": "c",
         "settings.h": "c",
-        "regex": "c"
+        "regex": "c",
+        "sqlite.h": "c",
+        "main.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

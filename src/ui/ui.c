@@ -67,6 +67,10 @@ lv_obj_t * ui_DeviceSettingsHeader;
 lv_obj_t * ui_Label2;
 void ui_event_ScreenBrightnessArk(lv_event_t * e);
 lv_obj_t * ui_ScreenBrightnessArk;
+void ui_event_DeviceInformation(lv_event_t * e);
+lv_obj_t * ui_DeviceInformation;
+lv_obj_t * ui_DeviceInformationHeader;
+lv_obj_t * ui_KitsuDeckVersion;
 lv_obj_t * ui_SettingsKeyboardText;
 lv_obj_t * ui_SettingsKeyboardNumber;
 lv_obj_t * ui____initial_actions0;
@@ -96,7 +100,7 @@ void ui_event_SettingsBtn(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
     if(event_code == LV_EVENT_RELEASED) {
-        _ui_screen_change(ui_SettingsView, LV_SCR_LOAD_ANIM_OVER_LEFT, 500, 0);
+        _ui_screen_change(ui_SettingsView, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
     }
 }
 void ui_event_SettingsView(lv_event_t * e)
@@ -121,7 +125,7 @@ void ui_event_SettingsBackToHome(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
     if(event_code == LV_EVENT_RELEASED) {
-        _ui_screen_change(ui_Home, LV_SCR_LOAD_ANIM_OVER_RIGHT, 500, 0);
+        _ui_screen_change(ui_Home, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0);
     }
 }
 void ui_event_SettingsPanel(lv_event_t * e)
@@ -240,6 +244,15 @@ void ui_event_ScreenBrightnessArk(lv_event_t * e)
     }
     if(event_code == LV_EVENT_RELEASED) {
         saveSettingsBrightnessArkValue(e);
+    }
+}
+void ui_event_DeviceInformation(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_SettingsKeyboardNumber, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_SettingsKeyboardText, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
     }
 }
 

@@ -34,10 +34,6 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
         /*Set the coordinates*/
         data->point.x = touch_last_x;
         data->point.y = touch_last_y;
-        Serial.print("Data x ");
-        Serial.println(data->point.x);
-        Serial.print("Data y ");
-        Serial.println(data->point.y);
     }
     else if (touch_released())
     {

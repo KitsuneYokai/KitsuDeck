@@ -11,18 +11,27 @@ void ui_SettingsView_screen_init(void)
     lv_obj_clear_flag(ui_SettingsView, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_flex_flow(ui_SettingsView, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_SettingsView, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_bg_color(ui_SettingsView, lv_color_hex(0x0B0D10), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_SettingsView, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_SettingsView, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_right(ui_SettingsView, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui_SettingsView, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_SettingsView, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_bottom(ui_SettingsView, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SettingsHeaderPanel = lv_obj_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsHeaderPanel, lv_pct(100));
-    lv_obj_set_height(ui_SettingsHeaderPanel, LV_SIZE_CONTENT);    /// 50
+    lv_obj_set_height(ui_SettingsHeaderPanel, lv_pct(13));
     lv_obj_set_align(ui_SettingsHeaderPanel, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_SettingsHeaderPanel, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(ui_SettingsHeaderPanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(ui_SettingsHeaderPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_SettingsHeaderPanel, lv_color_hex(0x0B0D10), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_SettingsHeaderPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_SettingsHeaderPanel, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_SettingsHeaderPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_SettingsHeaderPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_SettingsHeaderPanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_SettingsHeaderPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SettingsBackToHome = lv_imgbtn_create(ui_SettingsHeaderPanel);
     lv_imgbtn_set_src(ui_SettingsBackToHome, LV_IMGBTN_STATE_RELEASED, NULL, &ui_img_b2_png, NULL);
@@ -45,7 +54,7 @@ void ui_SettingsView_screen_init(void)
     ui_SettingsPanel = lv_obj_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsPanel, lv_pct(100));
     lv_obj_set_flex_grow(ui_SettingsPanel, 1);
-    lv_obj_set_x(ui_SettingsPanel, -176);
+    lv_obj_set_x(ui_SettingsPanel, -224);
     lv_obj_set_y(ui_SettingsPanel, -209);
     lv_obj_set_align(ui_SettingsPanel, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_SettingsPanel, LV_FLEX_FLOW_COLUMN_WRAP);
@@ -54,18 +63,25 @@ void ui_SettingsView_screen_init(void)
                     LV_OBJ_FLAG_SCROLL_ONE);     /// Flags
     lv_obj_clear_flag(ui_SettingsPanel, LV_OBJ_FLAG_SCROLL_MOMENTUM);      /// Flags
     lv_obj_set_scroll_dir(ui_SettingsPanel, LV_DIR_HOR);
-    lv_obj_set_style_bg_color(ui_SettingsPanel, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_SettingsPanel, lv_color_hex(0x0B0D10), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SettingsPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_SettingsPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_SettingsPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_SettingsPanel, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiConnect = lv_obj_create(ui_SettingsPanel);
     lv_obj_set_height(ui_WifiConnect, lv_pct(100));
     lv_obj_set_width(ui_WifiConnect, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_x(ui_WifiConnect, 79);
-    lv_obj_set_y(ui_WifiConnect, -726);
+    lv_obj_set_x(ui_WifiConnect, 83);
+    lv_obj_set_y(ui_WifiConnect, -1081);
     lv_obj_set_align(ui_WifiConnect, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_WifiConnect, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_WifiConnect, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_WifiConnect, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiConnect, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_WifiConnect, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiHeader = lv_label_create(ui_WifiConnect);
     lv_obj_set_width(ui_WifiHeader, LV_SIZE_CONTENT);   /// 1
@@ -78,6 +94,11 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_width(ui_WifiSsidRoller, 200);
     lv_obj_set_height(ui_WifiSsidRoller, lv_pct(45));
     lv_obj_set_align(ui_WifiSsidRoller, LV_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_WifiSsidRoller, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiSsidRoller, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(ui_WifiSsidRoller, lv_color_hex(0xE70004), LV_PART_SELECTED | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiSsidRoller, 255, LV_PART_SELECTED | LV_STATE_DEFAULT);
 
     ui_WifiPasswordTextInput = lv_textarea_create(ui_WifiConnect);
     lv_obj_set_width(ui_WifiPasswordTextInput, 200);
@@ -88,6 +109,8 @@ void ui_SettingsView_screen_init(void)
     lv_textarea_set_placeholder_text(ui_WifiPasswordTextInput, "Password");
     lv_textarea_set_one_line(ui_WifiPasswordTextInput, true);
     lv_textarea_set_password_mode(ui_WifiPasswordTextInput, true);
+    lv_obj_set_style_bg_color(ui_WifiPasswordTextInput, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiPasswordTextInput, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ButtonPanel = lv_obj_create(ui_WifiConnect);
     lv_obj_set_width(ui_ButtonPanel, LV_SIZE_CONTENT);   /// 100
@@ -96,6 +119,13 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_flex_flow(ui_ButtonPanel, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(ui_ButtonPanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
     lv_obj_clear_flag(ui_ButtonPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonPanel, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_ButtonPanel, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_ButtonPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_ButtonPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_ButtonPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_ButtonPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiScanButton = lv_btn_create(ui_ButtonPanel);
     lv_obj_set_height(ui_WifiScanButton, 40);
@@ -103,6 +133,8 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_WifiScanButton, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_WifiScanButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_WifiScanButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_WifiScanButton, lv_color_hex(0xE70004), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiScanButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiScanText = lv_label_create(ui_WifiScanButton);
     lv_obj_set_width(ui_WifiScanText, LV_SIZE_CONTENT);   /// 1
@@ -116,6 +148,8 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_WifiSaveButton, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_WifiSaveButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_WifiSaveButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_WifiSaveButton, lv_color_hex(0xE70004), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_WifiSaveButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiSaveText = lv_label_create(ui_WifiSaveButton);
     lv_obj_set_width(ui_WifiSaveText, LV_SIZE_CONTENT);   /// 1
@@ -136,6 +170,8 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_flex_flow(ui_ButtonPanel2, LV_FLEX_FLOW_COLUMN_WRAP);
     lv_obj_set_flex_align(ui_ButtonPanel2, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
     lv_obj_clear_flag(ui_ButtonPanel2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonPanel2, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonPanel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TestWifiSettingsButton = lv_btn_create(ui_ButtonPanel2);
     lv_obj_set_height(ui_TestWifiSettingsButton, 40);
@@ -143,6 +179,8 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_TestWifiSettingsButton, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_TestWifiSettingsButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_TestWifiSettingsButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_TestWifiSettingsButton, lv_color_hex(0xE70004), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_TestWifiSettingsButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TestWifiSettingsText = lv_label_create(ui_TestWifiSettingsButton);
     lv_obj_set_width(ui_TestWifiSettingsText, LV_SIZE_CONTENT);   /// 1
@@ -158,6 +196,9 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_ComputerSettings, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_ComputerSettings, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_ComputerSettings, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_SPACE_AROUND);
+    lv_obj_set_style_bg_color(ui_ComputerSettings, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ComputerSettings, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_ComputerSettings, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ComputerSettingsHeader = lv_label_create(ui_ComputerSettings);
     lv_obj_set_width(ui_ComputerSettingsHeader, LV_SIZE_CONTENT);   /// 1
@@ -183,6 +224,8 @@ void ui_SettingsView_screen_init(void)
     lv_textarea_set_placeholder_text(ui_ComputerAuthPin, "Pin");
     lv_textarea_set_one_line(ui_ComputerAuthPin, true);
     lv_textarea_set_password_mode(ui_ComputerAuthPin, true);
+    lv_obj_set_style_bg_color(ui_ComputerAuthPin, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ComputerAuthPin, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ComputerAuthPinNew = lv_textarea_create(ui_ComputerSettings);
     lv_obj_set_width(ui_ComputerAuthPinNew, 200);
@@ -194,6 +237,8 @@ void ui_SettingsView_screen_init(void)
     lv_textarea_set_placeholder_text(ui_ComputerAuthPinNew, "New pin");
     lv_textarea_set_one_line(ui_ComputerAuthPinNew, true);
     lv_textarea_set_password_mode(ui_ComputerAuthPinNew, true);
+    lv_obj_set_style_bg_color(ui_ComputerAuthPinNew, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ComputerAuthPinNew, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ComputerSaveButton = lv_btn_create(ui_ComputerSettings);
     lv_obj_set_height(ui_ComputerSaveButton, 40);
@@ -203,6 +248,8 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_ComputerSaveButton, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_ComputerSaveButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_ComputerSaveButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ComputerSaveButton, lv_color_hex(0xE70004), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ComputerSaveButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ComputerSaveText = lv_label_create(ui_ComputerSaveButton);
     lv_obj_set_width(ui_ComputerSaveText, LV_SIZE_CONTENT);   /// 1
@@ -218,6 +265,9 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_DeviceSettings, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_DeviceSettings, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_DeviceSettings, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_bg_color(ui_DeviceSettings, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_DeviceSettings, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_DeviceSettings, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_DeviceSettingsHeader = lv_label_create(ui_DeviceSettings);
     lv_obj_set_width(ui_DeviceSettingsHeader, LV_SIZE_CONTENT);   /// 1
@@ -236,6 +286,44 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_width(ui_ScreenBrightnessArk, 150);
     lv_obj_set_height(ui_ScreenBrightnessArk, 150);
     lv_obj_set_align(ui_ScreenBrightnessArk, LV_ALIGN_CENTER);
+    lv_arc_set_range(ui_ScreenBrightnessArk, 10, 100);
+    lv_obj_set_style_arc_color(ui_ScreenBrightnessArk, lv_color_hex(0x080C10), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_opa(ui_ScreenBrightnessArk, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_arc_color(ui_ScreenBrightnessArk, lv_color_hex(0xE70004), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_opa(ui_ScreenBrightnessArk, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(ui_ScreenBrightnessArk, lv_color_hex(0xE70004), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ScreenBrightnessArk, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_color(ui_ScreenBrightnessArk, lv_color_hex(0x000000), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_opa(ui_ScreenBrightnessArk, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_width(ui_ScreenBrightnessArk, 5, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_spread(ui_ScreenBrightnessArk, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+
+    ui_DeviceInformation = lv_obj_create(ui_SettingsPanel);
+    lv_obj_set_height(ui_DeviceInformation, lv_pct(100));
+    lv_obj_set_width(ui_DeviceInformation, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_x(ui_DeviceInformation, -19);
+    lv_obj_set_y(ui_DeviceInformation, -433);
+    lv_obj_set_align(ui_DeviceInformation, LV_ALIGN_CENTER);
+    lv_obj_set_flex_flow(ui_DeviceInformation, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(ui_DeviceInformation, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_bg_color(ui_DeviceInformation, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_DeviceInformation, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_side(ui_DeviceInformation, LV_BORDER_SIDE_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_DeviceInformationHeader = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_DeviceInformationHeader, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_DeviceInformationHeader, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_DeviceInformationHeader, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_DeviceInformationHeader, "Information:");
+    lv_obj_set_style_text_font(ui_DeviceInformationHeader, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_KitsuDeckVersion = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_KitsuDeckVersion, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_KitsuDeckVersion, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_KitsuDeckVersion, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_KitsuDeckVersion, "Version: ");
 
     ui_SettingsKeyboardText = lv_keyboard_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsKeyboardText, lv_pct(100));
@@ -271,6 +359,7 @@ void ui_SettingsView_screen_init(void)
     lv_obj_add_event_cb(ui_ComputerSettings, ui_event_ComputerSettings, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ScreenBrightnessArk, ui_event_ScreenBrightnessArk, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_DeviceSettings, ui_event_DeviceSettings, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_DeviceInformation, ui_event_DeviceInformation, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsPanel, ui_event_SettingsPanel, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsView, ui_event_SettingsView, LV_EVENT_ALL, NULL);
 

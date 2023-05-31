@@ -9,6 +9,8 @@
 #include "../utils/Screen.h"
 #include "WiFi.h"
 
+#include "../main.h"
+
 void initHome(lv_event_t *e)
 {
 	// Your code here
@@ -49,6 +51,9 @@ void initSettings(lv_event_t *e)
 	String value = getSettings("brightness");
 	value = String((value.toInt() * 100) / 255);
 	lv_arc_set_value(ui_ScreenBrightnessArk, value.toInt());
+
+	// SettingsInformation init
+	lv_label_set_text(ui_KitsuDeckVersion, "Version: " VERSION);
 }
 
 void ScanWifiSsid(lv_event_t *e)
