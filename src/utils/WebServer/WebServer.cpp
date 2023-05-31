@@ -3,7 +3,7 @@
 #include <ArduinoJson.h>
 
 #include "../wifiUtils.h"
-#include "../Settings.h"
+#include "../settings.h"
 #include "WebServer.h"
 #include "../Screen.h"
 
