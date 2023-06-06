@@ -71,7 +71,15 @@
         "settings.h": "c",
         "regex": "c",
         "sqlite.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "bitset": "cpp",
+        "freertos.h": "c",
+        "task.h": "c",
+        "wifiutils.h": "c",
+        "esp_heap_caps.h": "c",
+        "ui_img_macroicon_png.c": "cpp",
+        "ffat.h": "c",
+        "ff.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

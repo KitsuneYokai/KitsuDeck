@@ -85,6 +85,8 @@ bool connectToWifi(String ssid, String password)
     }
     if (WiFi.status() == WL_CONNECTED)
     {
+        String ip = "Connected: " + WiFi.localIP().toString();
+        lv_label_set_text(ui_WifiTestResultLabel, ip.c_str());
         return true;
     }
     else
@@ -96,5 +98,6 @@ bool connectToWifi(String ssid, String password)
 bool disconnectFromWifi()
 {
     WiFi.disconnect();
+    lv_label_set_text(ui_WifiTestResultLabel, "Not Connected");
     return true;
 }

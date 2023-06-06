@@ -82,17 +82,25 @@ void ui_Home_screen_init(void)
     lv_obj_set_x(ui_DeckCol, 19);
     lv_obj_set_y(ui_DeckCol, 182);
     lv_obj_set_align(ui_DeckCol, LV_ALIGN_CENTER);
-    lv_obj_set_flex_flow(ui_DeckCol, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(ui_DeckCol, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_flex_flow(ui_DeckCol, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(ui_DeckCol, LV_FLEX_ALIGN_SPACE_EVENLY, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_SPACE_EVENLY);
     lv_obj_clear_flag(ui_DeckCol, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_DeckCol, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_DeckCol, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_DeckCol, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_ImgButton1 = lv_imgbtn_create(ui_DeckCol);
-    lv_obj_set_height(ui_ImgButton1, 64);
-    lv_obj_set_width(ui_ImgButton1, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_align(ui_ImgButton1, LV_ALIGN_CENTER);
+    ui_DeckMacroNav = lv_obj_create(ui_Home);
+    lv_obj_set_width(ui_DeckMacroNav, lv_pct(6));
+    lv_obj_set_height(ui_DeckMacroNav, lv_pct(100));
+    lv_obj_set_x(ui_DeckMacroNav, 19);
+    lv_obj_set_y(ui_DeckMacroNav, 182);
+    lv_obj_set_align(ui_DeckMacroNav, LV_ALIGN_CENTER);
+    lv_obj_set_flex_flow(ui_DeckMacroNav, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(ui_DeckMacroNav, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_SPACE_BETWEEN);
+    lv_obj_clear_flag(ui_DeckMacroNav, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_DeckMacroNav, lv_color_hex(0x101418), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_DeckMacroNav, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_DeckMacroNav, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_SettingsBtn, ui_event_SettingsBtn, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Home, ui_event_Home, LV_EVENT_ALL, NULL);

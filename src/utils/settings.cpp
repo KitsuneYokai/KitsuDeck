@@ -5,7 +5,6 @@
 #include "SD.h"
 #include <ArduinoJson.h>
 
-// settings file variable
 const char *settingsFile = "/settings.json";
 
 void createSettings()

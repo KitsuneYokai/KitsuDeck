@@ -54,8 +54,8 @@ void ui_SettingsView_screen_init(void)
     ui_SettingsPanel = lv_obj_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsPanel, lv_pct(100));
     lv_obj_set_flex_grow(ui_SettingsPanel, 1);
-    lv_obj_set_x(ui_SettingsPanel, -224);
-    lv_obj_set_y(ui_SettingsPanel, -209);
+    lv_obj_set_x(ui_SettingsPanel, -383);
+    lv_obj_set_y(ui_SettingsPanel, -211);
     lv_obj_set_align(ui_SettingsPanel, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_SettingsPanel, LV_FLEX_FLOW_COLUMN_WRAP);
     lv_obj_set_flex_align(ui_SettingsPanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
@@ -66,10 +66,12 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_style_bg_color(ui_SettingsPanel, lv_color_hex(0x0B0D10), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SettingsPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui_SettingsPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui_SettingsPanel, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui_SettingsPanel, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_SettingsPanel, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_row(ui_SettingsPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_column(ui_SettingsPanel, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_WifiConnect = lv_obj_create(ui_SettingsPanel);
     lv_obj_set_height(ui_WifiConnect, lv_pct(100));
@@ -325,12 +327,35 @@ void ui_SettingsView_screen_init(void)
     lv_obj_set_align(ui_KitsuDeckVersion, LV_ALIGN_CENTER);
     lv_label_set_text(ui_KitsuDeckVersion, "Version: ");
 
+    ui_RamHeader = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_RamHeader, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_RamHeader, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_RamHeader, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_RamHeader, "RAM:");
+
+    ui_RamValue = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_RamValue, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_RamValue, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_RamValue, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_RamValue, "");
+
+    ui_PsramHeader = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_PsramHeader, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PsramHeader, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_PsramHeader, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_PsramHeader, "PSRAM:");
+
+    ui_PsramValue = lv_label_create(ui_DeviceInformation);
+    lv_obj_set_width(ui_PsramValue, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PsramValue, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_PsramValue, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_PsramValue, "");
+
     ui_CreatedByInformation = lv_label_create(ui_DeviceInformation);
     lv_obj_set_width(ui_CreatedByInformation, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_CreatedByInformation, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_CreatedByInformation, LV_ALIGN_CENTER);
     lv_label_set_text(ui_CreatedByInformation, "Created by:\nKitsuneYokai");
-    lv_obj_set_style_text_align(ui_CreatedByInformation, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SettingsKeyboardText = lv_keyboard_create(ui_SettingsView);
     lv_obj_set_width(ui_SettingsKeyboardText, lv_pct(100));
@@ -341,6 +366,10 @@ void ui_SettingsView_screen_init(void)
     lv_obj_add_flag(ui_SettingsKeyboardText, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_SettingsKeyboardText,
                       LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_pad_left(ui_SettingsKeyboardText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_SettingsKeyboardText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_SettingsKeyboardText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_SettingsKeyboardText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SettingsKeyboardNumber = lv_keyboard_create(ui_SettingsView);
     lv_keyboard_set_mode(ui_SettingsKeyboardNumber, LV_KEYBOARD_MODE_NUMBER);
@@ -352,6 +381,10 @@ void ui_SettingsView_screen_init(void)
     lv_obj_add_flag(ui_SettingsKeyboardNumber, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_SettingsKeyboardNumber,
                       LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_SCROLLABLE);    /// Flags
+    lv_obj_set_style_pad_left(ui_SettingsKeyboardNumber, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_SettingsKeyboardNumber, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_SettingsKeyboardNumber, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_SettingsKeyboardNumber, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_SettingsBackToHome, ui_event_SettingsBackToHome, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsHeaderPanel, ui_event_SettingsHeaderPanel, LV_EVENT_ALL, NULL);

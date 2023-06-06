@@ -6,8 +6,10 @@
 #define WEBSOCKET_ENDPOINT "/ws"
 // define the api endpoints
 #define ROOT_ENDPOINT "/"
-#define Auth_ENDPOINT "/auth"
-#define KITSU_DECK_GET_SYSTEM_INFO "/sysinfo"
+#define AUTH_ENDPOINT "/auth"
+#define GET_MACRO_IMAGE "/getMacroImage"
+#define POST_MACRO_IMAGE "/postMacroImage"
+
 void startWebServer(void *parameter);
 
 #endif

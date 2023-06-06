@@ -8,12 +8,20 @@
 #include "../utils/settings.h"
 #include "../utils/Screen.h"
 #include "WiFi.h"
-
+#include "../utils/Database/Sqlite.h"
 #include "../main.h"
 
 void initHome(lv_event_t *e)
 {
-	// Your code here
+	// Testing the images to display on the home screen
+	DynamicJsonDocument macroImages = selectAll("SELECT * FROM macro_images");
+	for (int i = 0; i < macroImages.size(); i++)
+	{
+		String imagePath = "S:/images/macro_images/" + macroImages[i]["name"].as<String>();
+		lv_obj_t *img = lv_img_create(ui_DeckCol);
+		lv_img_set_src(img, imagePath.c_str());
+		// round the corners
+		}
 }
 
 void initSettings(lv_event_t *e)
@@ -24,16 +32,6 @@ void initSettings(lv_event_t *e)
 	lv_roller_set_options(ui_WifiSsidRoller, wifiSsid.c_str(), LV_ANIM_ON);
 	lv_textarea_set_text(ui_WifiPasswordTextInput, wifiPassword.c_str());
 
-	// set the wifi ip adress if connected
-	if (WiFi.status() == WL_CONNECTED)
-	{
-		String ip = "Connected: " + WiFi.localIP().toString();
-		lv_label_set_text(ui_WifiTestResultLabel, ip.c_str());
-	}
-	else
-	{
-		lv_label_set_text(ui_WifiTestResultLabel, "Not Connected");
-	}
 	// set the values of the Auth Settings
 	String pin = getSettings("auth_pin");
 	if (pin != "")
@@ -54,6 +52,12 @@ void initSettings(lv_event_t *e)
 
 	// SettingsInformation init
 	lv_label_set_text(ui_KitsuDeckVersion, "Version: " VERSION);
+	// set ram
+	String ram = String(ESP.getFreeHeap());
+	lv_label_set_text(ui_RamValue, ram.c_str());
+	// set psram
+	String psram = String(ESP.getFreePsram());
+	lv_label_set_text(ui_PsramValue, psram.c_str());
 }
 
 void ScanWifiSsid(lv_event_t *e)

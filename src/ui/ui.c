@@ -19,7 +19,7 @@ lv_obj_t * ui_ImgButton3;
 void ui_event_SettingsBtn(lv_event_t * e);
 lv_obj_t * ui_SettingsBtn;
 lv_obj_t * ui_DeckCol;
-lv_obj_t * ui_ImgButton1;
+lv_obj_t * ui_DeckMacroNav;
 
 // SCREEN: ui_SettingsView
 void ui_SettingsView_screen_init(void);
@@ -71,6 +71,10 @@ void ui_event_DeviceInformation(lv_event_t * e);
 lv_obj_t * ui_DeviceInformation;
 lv_obj_t * ui_DeviceInformationHeader;
 lv_obj_t * ui_KitsuDeckVersion;
+lv_obj_t * ui_RamHeader;
+lv_obj_t * ui_RamValue;
+lv_obj_t * ui_PsramHeader;
+lv_obj_t * ui_PsramValue;
 lv_obj_t * ui_CreatedByInformation;
 lv_obj_t * ui_SettingsKeyboardText;
 lv_obj_t * ui_SettingsKeyboardNumber;
@@ -101,7 +105,7 @@ void ui_event_SettingsBtn(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
     if(event_code == LV_EVENT_RELEASED) {
-        _ui_screen_change(ui_SettingsView, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
+        _ui_screen_change(ui_SettingsView, LV_SCR_LOAD_ANIM_NONE, 500, 0);
     }
 }
 void ui_event_SettingsView(lv_event_t * e)
@@ -126,7 +130,7 @@ void ui_event_SettingsBackToHome(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
     if(event_code == LV_EVENT_RELEASED) {
-        _ui_screen_change(ui_Home, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0);
+        _ui_screen_change(ui_Home, LV_SCR_LOAD_ANIM_NONE, 500, 0);
     }
 }
 void ui_event_SettingsPanel(lv_event_t * e)
