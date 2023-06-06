@@ -2,7 +2,6 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <SD.h>
-#include <Base64.h>
 
 #include "../wifiUtils.h"
 #include "../settings.h"
