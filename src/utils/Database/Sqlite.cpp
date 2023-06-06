@@ -173,7 +173,7 @@ void initDatabase()
         // TODO: add error screen here
         return;
     }
-    const char *sqlMacros = "CREATE TABLE macros(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, invoked INTEGER DEFAULT(0), action JSON, image INTEGER, layout_position INTEGER UNIQUE, CONSTRAINT macros_FK FOREIGN KEY(id) REFERENCES macro_images(id) ON DELETE SET NULL);";
+    const char *sqlMacros = "CREATE TABLE IF NOT EXISTS macros(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, invoked INTEGER DEFAULT(0), action JSON, image INTEGER, layout_position INTEGER UNIQUE, CONSTRAINT macros_FK FOREIGN KEY(id) REFERENCES macro_images(id) ON DELETE SET NULL);";
     rc = db_exec(sqlMacros);
     const char *sqlMacroImages = "CREATE TABLE IF NOT EXISTS macro_images(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);";
     rc = db_exec(sqlMacroImages);
