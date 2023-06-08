@@ -127,15 +127,6 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
                     client->text(response.as<String>());
                     return;
                 }
-                // set all macros that use this image to NULL
-                String update_macro_quarry = "UPDATE macros SET image = NULL WHERE image = '" + String(id) + "'";
-                int macro_image_update = db_exec(update_macro_quarry.c_str());
-                if (macro_image_update != SQLITE_DONE)
-                {
-                    response["message"] = "Failed to update macros that use this image";
-                    client->text(response.as<String>());
-                    return;
-                }
                 // delete the image from the database
                 String delete_image_quarry = "DELETE FROM macro_images WHERE id = " + String(id);
                 int update_macro_image = db_exec(delete_image_quarry.c_str());
@@ -162,7 +153,29 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
             }
             else
             {
-                // TODO:  handle the macro creation and add it to the database
+                Serial.println(doc.as<String>());
+                DynamicJsonDocument response(200);
+                response["event"] = "CREATE_MACRO";
+                response["status"] = false;
+
+                String name = doc["macro_name"];
+                String description = doc["macro_description"];
+                String action = doc["macro_action"];
+                String image = doc["macro_image_id"];
+
+                // insert the macro into the database
+                String insert_macro_quarry = "INSERT INTO macros (name, description, action, image) VALUES ('" + name + "', '" + description + "', '" + action + "', '" + image + "')";
+                int insert_macro = db_exec(insert_macro_quarry.c_str());
+                if (insert_macro == SQLITE_DONE)
+                {
+                    response["status"] = true;
+                    client->text(response.as<String>());
+                }
+                else
+                {
+                    response["message"] = "Failed to insert macro into database";
+                    client->text(response.as<String>());
+                }
             }
         }
     }
@@ -297,6 +310,15 @@ void handleMacroImagesPostRequest(AsyncWebServerRequest *request, String filenam
     else
     {
         Serial.println("Creating new macro image");
+        // check if the folder exists and create it if not
+        if (!SD.exists("/images"))
+        {
+            SD.mkdir("/images");
+        }
+        if (!SD.exists("/images/macro_images"))
+        {
+            SD.mkdir("/images/macro_images");
+        }
         if (!index)
         {
             // create the file
