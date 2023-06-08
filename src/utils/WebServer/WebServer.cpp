@@ -105,6 +105,54 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
                 client->text(response.as<String>());
             }
         }
+        if (doc["event"] == "DELETE_MACRO_IMAGE")
+        {
+            if (getSettings("auth_pin") != doc["auth_pin"])
+            {
+                client->close();
+            }
+            else
+            {
+                DynamicJsonDocument response(200);
+                response["event"] = "DELETE_MACRO_IMAGE";
+                response["status"] = false;
+
+                int id = doc["image_id"];
+                // get the image name from the database
+                String image_quarry = "SELECT name FROM macro_images WHERE id = " + String(id);
+                DynamicJsonDocument DbImage = selectOne(image_quarry.c_str());
+                if (DbImage.isNull())
+                {
+                    response["message"] = "Image not found";
+                    client->text(response.as<String>());
+                    return;
+                }
+                // set all macros that use this image to NULL
+                String update_macro_quarry = "UPDATE macros SET image = NULL WHERE image = '" + String(id) + "'";
+                int macro_image_update = db_exec(update_macro_quarry.c_str());
+                if (macro_image_update != SQLITE_DONE)
+                {
+                    response["message"] = "Failed to update macros that use this image";
+                    client->text(response.as<String>());
+                    return;
+                }
+                // delete the image from the database
+                String delete_image_quarry = "DELETE FROM macro_images WHERE id = " + String(id);
+                int update_macro_image = db_exec(delete_image_quarry.c_str());
+                if (update_macro_image == SQLITE_DONE)
+                {
+                    // delete the image from the sd card
+                    SD.remove("/images/macro_images/" + DbImage["name"].as<String>());
+                    response["status"] = true;
+                    client->text(response.as<String>());
+                }
+                else
+                {
+                    response["message"] = "Failed to delete image from database";
+                    client->text(response.as<String>());
+                }
+            }
+        }
         // create new macro
         if (doc["event"] == "CREATE_MACRO")
         {
