@@ -19,7 +19,7 @@ void errorSD()
     gfx->println("    Also, make sure that the SD Card is");
     gfx->println("    inserted correctly.\n");
     gfx->println("    If you still can't get it to work,");
-    gfx->println("    please contact me on Discord!             - KitsuneYokai#7746\n\n\n\n");
+    gfx->println("    please contact me on Discord!             - KitsuneYokai\n\n\n\n");
     gfx->setCursor(0, gfx->height() - 20);
     gfx->println("I'll give you 60 seconds until I explode! :D");
     //  wait for a while
@@ -47,7 +47,7 @@ void errorSettings()
     gfx->println("    directory of your SD Card and should be named");
     gfx->println("    settings.json.\n");
     gfx->println("    If you still can't get it to work,");
-    gfx->println("    please contact me on Discord!             - KitsuneYokai#7746\n\n\n\n");
+    gfx->println("    please contact me on Discord!             - KitsuneYokai\n\n\n\n");
     gfx->setCursor(0, gfx->height() - 20);
     gfx->println("You have 60 seconds until I expose your Browser History! :D");
     //  wait for a while
@@ -72,5 +72,5 @@ void errorWiFi()
     gfx->println("    Make sure that your WiFi network is in Range");
     gfx->println("    and that you have the correct password.\n");
     gfx->println("    If you still can't get it to work,");
-    gfx->println("    please contact me on Discord!             - KitsuneYokai#7746\n\n\n\n");
+    gfx->println("    please contact me on Discord!             - KitsuneYokai\n\n\n\n");
 }

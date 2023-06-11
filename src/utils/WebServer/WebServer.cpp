@@ -12,6 +12,7 @@
 #include "../../main.h"
 #include "../../ui/ui.h"
 
+#include "events/events.h"
 // define the web server and websocket server objects
 AsyncWebServer server(SERVER_PORT);
 AsyncWebSocket webSocket(WEBSOCKET_ENDPOINT);
@@ -21,20 +22,7 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
     // Handle WebSocket event
     if (type == WS_EVT_CONNECT)
     {
-        if (getSettings("auth_pin") != "")
-        {
-            StaticJsonDocument<200> doc;
-            doc["event"] = "CLIENT_AUTH";
-            doc["protected"] = true;
-            client->text(doc.as<String>());
-        }
-        else
-        {
-            StaticJsonDocument<200> doc;
-            doc["event"] = "CLIENT_AUTH";
-            doc["protected"] = false;
-            client->text(doc.as<String>());
-        }
+        sendAuthRequest(client);
     }
     else if (type == WS_EVT_DISCONNECT)
     {
@@ -46,137 +34,57 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
     }
     else if (type == WS_EVT_DATA)
     {
-        DynamicJsonDocument doc(4096);
+        DynamicJsonDocument doc(2 * 4096);
         DeserializationError error = deserializeJson(doc, data);
         // pin check event
-        if (doc["event"] == "CLIENT_AUTH")
+        if (doc["event"] == EVENT_CLIENT_AUTH)
         {
-            String pin = doc["auth_pin"];
-            if (getSettings("auth_pin") == pin)
-            {
-                DynamicJsonDocument response(200);
-                response["event"] = "CLIENT_AUTH_SUCCESS";
-                client->text(response.as<String>());
-            }
-            else
-            {
-                DynamicJsonDocument response(200);
-                response["event"] = "CLIENT_AUTH_FAILED";
-                client->text(response.as<String>());
-                client->close();
-            }
+            handleClientAuthEvent(client, doc);
         }
-        // TODO: seperate this into different files and make it more readable
         // set brightness event
-        if (doc["event"] == "SET_BRIGHTNESS")
+        if (doc["event"] == EVENT_SET_BRIGHTNESS)
         {
-            if (getSettings("auth_pin") != doc["auth_pin"])
-            {
-                client->close();
-            }
-            else
-            {
-                setLCDBrightness(doc["value"].as<int>());
-                int value = (doc["value"].as<int>() * 100) / 255;
-                lv_arc_set_value(ui_ScreenBrightnessArk, value);
-                setSettings("brightness", String(doc["value"].as<int>()));
-            }
+            handleSetBrightnessEvent(client, doc);
         }
         // get brightness event (returns the brightness value)
-        if (doc["event"] == "GET_BRIGHTNESS")
+        if (doc["event"] == EVENT_GET_BRIGHTNESS)
         {
-            DynamicJsonDocument response(200);
-            response["event"] = "GET_BRIGHTNESS";
-            response["value"] = getSettings("brightness").toInt();
-            client->text(response.as<String>());
+            handleGetBrightnessEvent(client);
         }
         // get macro images event (returns the macro images)
-        if (doc["event"] == "GET_MACRO_IMAGES")
+        if (doc["event"] == EVENT_GET_MACRO_IMAGES)
         {
-            if (getSettings("auth_pin") != doc["auth_pin"])
-            {
-                client->close();
-            }
-            else
-            {
-                DynamicJsonDocument response(4096);
-                response["event"] = "GET_MACRO_IMAGES";
-                response["images"] = selectAll("SELECT * FROM macro_images");
-                client->text(response.as<String>());
-            }
+            handleGetMacroImagesEvent(client, doc);
         }
-        if (doc["event"] == "DELETE_MACRO_IMAGE")
+        // delete macro image event
+        if (doc["event"] == EVENT_DELETE_MACRO_IMAGE)
         {
-            if (getSettings("auth_pin") != doc["auth_pin"])
-            {
-                client->close();
-            }
-            else
-            {
-                DynamicJsonDocument response(200);
-                response["event"] = "DELETE_MACRO_IMAGE";
-                response["status"] = false;
-
-                int id = doc["image_id"];
-                // get the image name from the database
-                String image_quarry = "SELECT name FROM macro_images WHERE id = " + String(id);
-                DynamicJsonDocument DbImage = selectOne(image_quarry.c_str());
-                if (DbImage.isNull())
-                {
-                    response["message"] = "Image not found";
-                    client->text(response.as<String>());
-                    return;
-                }
-                // delete the image from the database
-                String delete_image_quarry = "DELETE FROM macro_images WHERE id = " + String(id);
-                int update_macro_image = db_exec(delete_image_quarry.c_str());
-                if (update_macro_image == SQLITE_DONE)
-                {
-                    // delete the image from the sd card
-                    SD.remove("/images/macro_images/" + DbImage["name"].as<String>());
-                    response["status"] = true;
-                    client->text(response.as<String>());
-                }
-                else
-                {
-                    response["message"] = "Failed to delete image from database";
-                    client->text(response.as<String>());
-                }
-            }
+            handleDeleteMacroImageEvent(client, doc);
         }
         // create new macro
-        if (doc["event"] == "CREATE_MACRO")
+        if (doc["event"] == EVENT_CREATE_MACRO)
         {
-            if (getSettings("auth_pin") != doc["auth_pin"])
-            {
-                client->close();
-            }
-            else
-            {
-                Serial.println(doc.as<String>());
-                DynamicJsonDocument response(200);
-                response["event"] = "CREATE_MACRO";
-                response["status"] = false;
-
-                String name = doc["macro_name"];
-                String description = doc["macro_description"];
-                String action = doc["macro_action"];
-                String image = doc["macro_image_id"];
-
-                // insert the macro into the database
-                String insert_macro_quarry = "INSERT INTO macros (name, description, action, image) VALUES ('" + name + "', '" + description + "', '" + action + "', '" + image + "')";
-                int insert_macro = db_exec(insert_macro_quarry.c_str());
-                if (insert_macro == SQLITE_DONE)
-                {
-                    response["status"] = true;
-                    client->text(response.as<String>());
-                }
-                else
-                {
-                    response["message"] = "Failed to insert macro into database";
-                    client->text(response.as<String>());
-                }
-            }
+            handleCreateMacroEvent(client, doc);
+        }
+        // edit macro event
+        if (doc["event"] == EVENT_EDIT_MACRO)
+        {
+            handleEditMacroEvent(client, doc);
+        }
+        // delete macro event
+        if (doc["event"] == EVENT_DELETE_MACRO)
+        {
+            handleDeleteMacroEvent(client, doc);
+        }
+        // gets the macros from the database (20 at a time)
+        if (doc["event"] == EVENT_GET_MACROS)
+        {
+            handleGetMacrosEvent(client, doc);
+        }
+        // gets one specific macro from the database by id
+        if (doc["event"] == EVENT_GET_MACRO)
+        {
+            handleGetMacroEvent(client, doc);
         }
     }
 }
@@ -399,7 +307,7 @@ void startWebServer(void *parameter)
             POST_MACRO_IMAGE, HTTP_POST, [](AsyncWebServerRequest *request) {}, handleMacroImagesPostRequest, NULL);
         // Setup 404
         server.onNotFound([](AsyncWebServerRequest *request)
-                          { request->send(404, "text/plain", "What are you looking for?. Anyways... I couldn't find what you are looking for, 404"); });
+                          { request->send(404, "text/plain", "What are you looking for? Anyways... (￣﹃￣)"); });
 
         // Setup WebSocket server
         webSocket.onEvent(handleWebSocketMessage);
