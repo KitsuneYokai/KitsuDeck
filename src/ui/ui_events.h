@@ -10,7 +10,9 @@
 extern "C" {
 #endif
 
-void initHome(lv_event_t * e);
+void initKitsuDeckMacros(lv_event_t * e);
+void DeckNavSliderReleased(lv_event_t * e);
+void DeckNavSliderValueChange(lv_event_t * e);
 void initSettings(lv_event_t * e);
 void ScanWifiSsid(lv_event_t * e);
 void SaveWifiSettings(lv_event_t * e);

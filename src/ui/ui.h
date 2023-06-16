@@ -15,6 +15,7 @@ extern "C" {
 #include "lv_i18n.h"
 #include "ui_helpers.h"
 #include "ui_events.h"
+void gert_Animation(lv_obj_t * TargetObject, int delay);
 // SCREEN: ui_Home
 void ui_Home_screen_init(void);
 void ui_event_Home(lv_event_t * e);
@@ -26,8 +27,11 @@ extern lv_obj_t * ui_ImgButton3;
 void ui_event_SettingsBtn(lv_event_t * e);
 extern lv_obj_t * ui_SettingsBtn;
 extern lv_obj_t * ui_DeckCol;
-extern lv_obj_t * ui_DeckNavCol;
+extern lv_obj_t * ui_Panel3;
+void ui_event_DeckNavSlider(lv_event_t * e);
 extern lv_obj_t * ui_DeckNavSlider;
+extern lv_obj_t * ui_PageChangePanel;
+extern lv_obj_t * ui_PageText;
 // SCREEN: ui_SettingsView
 void ui_SettingsView_screen_init(void);
 void ui_event_SettingsView(lv_event_t * e);

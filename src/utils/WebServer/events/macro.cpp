@@ -5,6 +5,7 @@
 #include "events.h"
 #include "../../settings.h"
 #include "../../Database/Sqlite.h"
+#include "../../macros.h"
 
 // EVENT_GET_MACRO_IMAGES event function
 void handleGetMacroImagesEvent(AsyncWebSocketClient *client, DynamicJsonDocument &json)
@@ -62,6 +63,7 @@ void handleDeleteMacroImageEvent(AsyncWebSocketClient *client, DynamicJsonDocume
             SD.remove("/images/macro_images/" + DbImage["name"].as<String>());
             response["status"] = true;
             client->text(response.as<String>());
+            loadKitsuDeckMacros();
         }
         else
         {
@@ -131,6 +133,7 @@ void handleEditMacroEvent(AsyncWebSocketClient *client, DynamicJsonDocument &jso
         {
             response["status"] = true;
             client->text(response.as<String>());
+            loadKitsuDeckMacros();
         }
         else
         {
@@ -162,6 +165,7 @@ void handleDeleteMacroEvent(AsyncWebSocketClient *client, DynamicJsonDocument &j
         {
             response["status"] = true;
             client->text(response.as<String>());
+            loadKitsuDeckMacros();
         }
         else
         {
@@ -246,19 +250,33 @@ void handleUpdateMacroLayoutEvent(AsyncWebSocketClient *client, DynamicJsonDocum
     }
     else
     {
-        // debug print while constructing
-        Serial.println(json.as<String>());
         DynamicJsonDocument response(200);
         response["event"] = EVENT_UPDATE_MACRO_LAYOUT;
 
+        // json variables
         String macro_id = json["macro_id"];
         String layout_position = json["layout_position"];
-
+        // check if there is a macro in the layout position
+        String macro_layout_check = "SELECT * FROM macros WHERE layout_position = '" + String(layout_position) + "'";
+        DynamicJsonDocument macro_layout = selectOne(macro_layout_check.c_str());
+        if (!macro_layout.isNull())
+        {
+            // if there is a macro in the layout position update it to null
+            String old_macro_id = macro_layout["id"];
+            String old_macro_update = "UPDATE macros SET layout_position = NULL WHERE id = '" + old_macro_id + "'";
+            int old_macro = db_exec(old_macro_update.c_str());
+            if (old_macro == SQLITE_DONE)
+            {
+                Serial.println("Old macro updated");
+            }
+        }
+        // update the macro in the database to the new layout position
         String macro_quarry = "UPDATE macros SET layout_position = '" + String(layout_position) + "' WHERE id = " + String(macro_id);
         int macro = db_exec(macro_quarry.c_str());
         if (macro == SQLITE_DONE)
         {
             client->text(response.as<String>());
+            loadKitsuDeckMacros();
         }
     }
 }
