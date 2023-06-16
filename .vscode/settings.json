@@ -79,7 +79,8 @@
         "esp_heap_caps.h": "c",
         "ui_img_macroicon_png.c": "cpp",
         "ffat.h": "c",
-        "ff.h": "c"
+        "ff.h": "c",
+        "webserver.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

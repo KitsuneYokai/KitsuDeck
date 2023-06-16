@@ -26,7 +26,8 @@ extern lv_obj_t * ui_ImgButton3;
 void ui_event_SettingsBtn(lv_event_t * e);
 extern lv_obj_t * ui_SettingsBtn;
 extern lv_obj_t * ui_DeckCol;
-extern lv_obj_t * ui_DeckMacroNav;
+extern lv_obj_t * ui_DeckNavCol;
+extern lv_obj_t * ui_DeckNavSlider;
 // SCREEN: ui_SettingsView
 void ui_SettingsView_screen_init(void);
 void ui_event_SettingsView(lv_event_t * e);
@@ -89,6 +90,7 @@ extern lv_obj_t * ui____initial_actions0;
 LV_IMG_DECLARE(ui_img_deckimg_png);    // assets\deckImg.png
 LV_IMG_DECLARE(ui_img_gear_png);    // assets\gear.png
 LV_IMG_DECLARE(ui_img_b2_png);    // assets\b2.png
+LV_IMG_DECLARE(ui_img_macro_icon_png);    // assets\macro_icon.png
 
 void ui_init(void);
 

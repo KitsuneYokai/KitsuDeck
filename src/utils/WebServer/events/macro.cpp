@@ -180,16 +180,16 @@ void handleGetMacrosEvent(AsyncWebSocketClient *client, DynamicJsonDocument &jso
     }
     else
     {
-        // get the start value from the json
-        int startValue = json["start_value"];
         // get the number of macros in the database
         String count_macros_quarry = "SELECT COUNT(*) FROM macros";
         DynamicJsonDocument count_macros = selectOne(count_macros_quarry.c_str());
         // change the json COUNT(*) key to count as int
         count_macros["count"] = count_macros["COUNT(*)"].as<int>();
         count_macros.remove("COUNT(*)");
+        // create a for loop for 20 macros at a time
         for (int i = 0; i < count_macros["count"].as<int>();)
         {
+            Serial.println("sending macros" + String(i));
             // get the macro from the database
             String macro_quarry = "SELECT id, name, image, layout_position FROM macros LIMIT 20 OFFSET " + String(i);
             DynamicJsonDocument macros = selectAll(macro_quarry.c_str());
@@ -235,5 +235,30 @@ void handleGetMacroEvent(AsyncWebSocketClient *client, DynamicJsonDocument &json
         response["macro"] = macro;
         response["status"] = true;
         client->text(response.as<String>());
+    }
+}
+
+void handleUpdateMacroLayoutEvent(AsyncWebSocketClient *client, DynamicJsonDocument &json)
+{
+    if (getSettings("auth_pin") != json["auth_pin"])
+    {
+        client->close();
+    }
+    else
+    {
+        // debug print while constructing
+        Serial.println(json.as<String>());
+        DynamicJsonDocument response(200);
+        response["event"] = EVENT_UPDATE_MACRO_LAYOUT;
+
+        String macro_id = json["macro_id"];
+        String layout_position = json["layout_position"];
+
+        String macro_quarry = "UPDATE macros SET layout_position = '" + String(layout_position) + "' WHERE id = " + String(macro_id);
+        int macro = db_exec(macro_quarry.c_str());
+        if (macro == SQLITE_DONE)
+        {
+            client->text(response.as<String>());
+        }
     }
 }

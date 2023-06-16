@@ -86,6 +86,10 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
         {
             handleGetMacroEvent(client, doc);
         }
+        if (doc["event"] == EVENT_UPDATE_MACRO_LAYOUT)
+        {
+            handleUpdateMacroLayoutEvent(client, doc);
+        }
     }
 }
 // Handle HTTP GET request for /
