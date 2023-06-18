@@ -334,3 +334,9 @@ void startWebServer(void *parameter)
         vTaskDelete(NULL);
     }
 }
+
+// --- websocket functions ---
+void sendWebsocketMessage(String message)
+{
+    webSocket.textAll(message);
+}
