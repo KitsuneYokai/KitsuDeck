@@ -4,6 +4,7 @@
 #include "../ui/ui.h"
 
 #include "WebServer/WebServer.h"
+# include "./Timers/clock.h"
 
 String getKitsuDeckHostname()
 {
@@ -87,6 +88,8 @@ bool connectToWifi(String ssid, String password)
     {
         String ip = "Connected: " + WiFi.localIP().toString();
         lv_label_set_text(ui_WifiTestResultLabel, ip.c_str());
+        initSNTP();
+        xTaskCreate(wait_for_sntp_sync, "SNTP_Task", 4096, NULL, 5, NULL);
         return true;
     }
     else

@@ -80,7 +80,8 @@
         "ui_img_macroicon_png.c": "cpp",
         "ffat.h": "c",
         "ff.h": "c",
-        "webserver.h": "c"
+        "webserver.h": "c",
+        "iostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

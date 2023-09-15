@@ -34,6 +34,7 @@ void handleWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client
     }
     else if (type == WS_EVT_DATA)
     {
+        printf("WebSocket client #%u data:\n", client->id());
         DynamicJsonDocument doc(2 * 4096);
         DeserializationError error = deserializeJson(doc, data);
         // pin check event

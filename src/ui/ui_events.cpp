@@ -9,49 +9,19 @@
 #include "../utils/Screen.h"
 #include "WiFi.h"
 #include "../utils/Database/Sqlite.h"
+#include "../utils/Timers/clock.h"
 
 #include "../utils/macros.h"
 #include "../main.h"
 
-void initKitsuDeckMacros(lv_event_t *e)
+void initKitsudeck(lv_event_t * e)
 {
+	// load the macros
 	loadKitsuDeckMacros();
-}
-
-void initSettings(lv_event_t *e)
-{
-	// set the values of the wifi settings
-	String wifiSsid = getSettings("wifi_ssid");
-	String wifiPassword = getSettings("wifi_password");
-	lv_roller_set_options(ui_WifiSsidRoller, wifiSsid.c_str(), LV_ANIM_ON);
-	lv_textarea_set_text(ui_WifiPasswordTextInput, wifiPassword.c_str());
-
-	// set the values of the Auth Settings
-	String pin = getSettings("auth_pin");
-	if (pin != "")
-	{
-		lv_label_set_text(ui_AuthStatus, "Status: Secured");
-		lv_obj_clear_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
-	}
-	else
-	{
-		lv_label_set_text(ui_AuthStatus, "Status: Not Secured");
-		lv_obj_add_flag(ui_ComputerAuthPinNew, LV_OBJ_FLAG_HIDDEN);
-	}
-
-	// SettingsBrightness ark init
-	String value = getSettings("brightness");
-	value = String((value.toInt() * 100) / 255);
-	lv_arc_set_value(ui_ScreenBrightnessArk, value.toInt());
-
-	// SettingsInformation init
-	lv_label_set_text(ui_KitsuDeckVersion, "Version: " VERSION);
-	// set ram
-	String ram = String(ESP.getFreeHeap());
-	lv_label_set_text(ui_RamValue, ram.c_str());
-	// set psram
-	String psram = String(ESP.getFreePsram());
-	lv_label_set_text(ui_PsramValue, psram.c_str());
+	// init the settings page values
+	initSettings();
+	// start the clock timer
+	initClockTimer();
 }
 
 void ScanWifiSsid(lv_event_t *e)
@@ -179,4 +149,22 @@ void DeckNavSliderValueChange(lv_event_t *e)
 	String value = String(lv_slider_get_value(ui_DeckNavSlider) + 1);
 	// set the value to the label
 	lv_label_set_text(ui_PageText, value.c_str());
+}
+
+void saveClockUtcSettings(lv_event_t * e)
+{
+	char selected_utc[7];
+	lv_roller_get_selected_str(ui_ClockTimezoneRoller, selected_utc, 100);
+	printf("Selected UTC: %s\n", selected_utc);
+
+	// save the utc to the settings
+	setSettings("utc", selected_utc);
+	String utc = "Selected Timezone: " + String(selected_utc);
+
+	// set the selected label to the current utc
+	lv_label_set_text(ui_ClockUtcSelected, utc.c_str());
+	// update the clock
+	stopSNTP();
+    initSNTP();
+    xTaskCreate(wait_for_sntp_sync, "SNTP_Task", 4096, NULL, 5, NULL);
 }
